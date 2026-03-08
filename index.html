@@ -4,10 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Family Group Hub</title>
-  <meta name="theme-color" content="#243244" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="manifest" href="./manifest.webmanifest" />
   <style>
     :root {
       color-scheme: light;
@@ -1466,6 +1462,338 @@
       }
     }
 
+
+    /* --- Aether layout update: Family Strip + Person Focus model --- */
+    .hidden { display: none !important; }
+    .mobile-only { display: none; }
+
+    .family-strip {
+      gap: 16px;
+    }
+
+    .family-card-button {
+      appearance: none;
+      width: 100%;
+      padding: 0;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .family-card {
+      min-height: 128px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .family-card.selected {
+      border-color: var(--border-strong);
+      background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .family-card-body {
+      gap: 10px;
+      align-content: start;
+    }
+
+    .family-name-text {
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .family-descriptor {
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--text-faint);
+    }
+
+    .family-chevron {
+      font-size: 14px;
+      line-height: 1;
+      color: var(--text-faint);
+      font-weight: 700;
+    }
+
+    .family-inline-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--text-soft);
+    }
+
+    .family-inline-stats strong {
+      color: var(--text);
+      font-size: 14px;
+      line-height: 18px;
+      margin-right: 4px;
+    }
+
+    .family-foot-note {
+      font-size: 11px;
+      line-height: 14px;
+      color: var(--text-faint);
+      font-weight: 700;
+    }
+
+    .person-focus-panel {
+      display: grid;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .person-focus-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .person-identity {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .person-name {
+      font-size: 18px;
+      line-height: 24px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .person-descriptor {
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--text-faint);
+    }
+
+    .person-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 140px);
+      gap: 12px;
+    }
+
+    .focus-metric {
+      min-height: 72px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      padding: 12px 14px;
+      display: grid;
+      gap: 6px;
+      align-content: center;
+    }
+
+    .person-filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .person-focus-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .focus-card {
+      min-height: 120px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .focus-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .focus-card-head h3 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 700;
+    }
+
+    .link-btn {
+      border: 0;
+      background: transparent;
+      color: var(--text-soft);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 700;
+      padding: 0;
+      min-height: auto;
+    }
+
+    .link-btn:hover {
+      color: var(--text);
+      transform: none;
+      background: transparent;
+    }
+
+    .calendar-panel .calendar-grid {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+
+    .calendar-filter.suggested {
+      border-color: var(--border-strong);
+      background: var(--surface-3);
+      color: var(--text);
+    }
+
+    .activity-control-row {
+      margin-top: -8px;
+    }
+
+    .activity-panel .controls-row .pill-group {
+      flex: 1 1 auto;
+    }
+
+    .empty.slim {
+      padding: 12px 14px;
+      min-height: 0;
+    }
+
+    .agenda-wrap {
+      display: grid;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .agenda-section {
+      display: grid;
+      gap: 10px;
+    }
+
+    .agenda-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .agenda-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .agenda-item {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      padding: 12px 14px;
+      display: grid;
+      grid-template-columns: 140px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      text-align: left;
+    }
+
+    .agenda-date {
+      display: grid;
+      gap: 4px;
+      color: var(--text-soft);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .agenda-date strong {
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--text);
+    }
+
+    .agenda-main {
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .agenda-title-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .agenda-copy {
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--text-soft);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    @media (max-width: 1360px) {
+      .person-metrics {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .person-focus-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .mobile-only { display: flex; }
+      .family-strip {
+        grid-template-columns: 1fr;
+      }
+      .person-focus-head,
+      .person-metrics,
+      .person-focus-grid,
+      .agenda-item {
+        grid-template-columns: 1fr;
+      }
+      .person-focus-panel {
+        padding: 16px;
+      }
+      .activity-panel {
+        min-height: 0;
+      }
+      .drag-hint {
+        display: none;
+      }
+      .activity-control-row,
+      .person-filter-row {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .family-card {
+        min-height: 108px;
+      }
+      .family-card-body,
+      .focus-card,
+      .agenda-item {
+        padding: 14px;
+      }
+      .family-inline-stats {
+        gap: 8px;
+        font-size: 12px;
+      }
+      .person-name {
+        font-size: 16px;
+        line-height: 22px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1491,13 +1819,14 @@
 
     <section class="stats-grid" id="statsGrid"></section>
     <section class="family-strip" id="familyStrip"></section>
+    <section class="panel person-focus-panel hidden" id="personFocus"></section>
 
     <section class="workspace-row main-row">
       <section class="panel">
         <div class="panel-header">
           <div class="panel-title">
             <h2>Tasks</h2>
-            <p>See what needs action first, then open the add drawer only when you need it.</p>
+            <p>Keep the list dominant, keep the add drawer tucked away, and stop making chores cosplay as strategy.</p>
           </div>
         </div>
 
@@ -1549,7 +1878,7 @@
             </div>
             <div class="row-3 field">
               <label for="taskDetails">Details</label>
-              <textarea class="textarea" id="taskDetails" placeholder="Add context that prevents confusion later."></textarea>
+              <textarea class="textarea" id="taskDetails" placeholder="Add the context that prevents confusion later."></textarea>
             </div>
             <div class="row-4 field">
               <button class="primary-btn" type="submit">Add task</button>
@@ -1564,7 +1893,7 @@
         <div class="panel-header">
           <div class="panel-title">
             <h2>Payments</h2>
-            <p>Track due dates, ownership, and status without making bills the family mystery genre.</p>
+            <p>Track what is due, who owns it, and what is already handled without turning bills into folklore.</p>
           </div>
         </div>
 
@@ -1620,11 +1949,11 @@
     </section>
 
     <section class="workspace-row secondary-row">
-      <section class="panel">
+      <section class="panel calendar-panel">
         <div class="panel-header">
           <div class="panel-title">
             <h2>Calendar</h2>
-            <p>Use this like a real planning surface: glance, preview, drag to move, then edit only when needed.</p>
+            <p>Planning first, editing second. Preview the day, then move or adjust what actually needs attention.</p>
           </div>
           <div class="month-nav">
             <button class="ghost-btn" id="prevMonth" type="button">◀</button>
@@ -1635,6 +1964,7 @@
 
         <div class="calendar-top-controls">
           <div class="segment-group" id="calendarModeTabs"></div>
+          <div class="segment-group mobile-only" id="calendarLayoutTabs"></div>
           <div class="calendar-filter-row" id="calendarFamilyFilters"></div>
           <div class="drag-hint">Drag a task or appointment chip to another day to move it.</div>
         </div>
@@ -1645,32 +1975,19 @@
         </div>
       </section>
 
-      <section class="panel">
+      <section class="panel activity-panel">
         <div class="panel-header">
           <div class="panel-title">
-            <h2>My Tab</h2>
-            <p>Personal accountability without making the app feel like a guilt aquarium.</p>
+            <h2>Activity log</h2>
+            <p>This carries the accountability trail so edits and handoffs are not hiding in the walls.</p>
           </div>
         </div>
-
-        <div class="my-tabs member-tab-row" id="myTabs"></div>
-        <div class="my-summary" id="mySummary"></div>
-        <div class="my-content" id="myContent"></div>
-        <div class="recent-card" id="myRecent"></div>
-      </section>
-    </section>
-
-    <section class="panel activity-panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <h2>Activity log</h2>
-          <p>See who moved, edited, or completed what so the household memory isn’t held together by vibes.</p>
-        </div>
-        <div class="panel-header-actions">
+        <div class="controls-row activity-control-row">
+          <div class="pill-group" id="activityFilters"></div>
           <button class="ghost-btn compact-btn" id="toggleActivityLog" type="button">Expand log</button>
         </div>
-      </div>
-      <div id="activityLog"></div>
+        <div id="activityLog"></div>
+      </section>
     </section>
   </main>
 
@@ -1689,9 +2006,11 @@
       paymentFilter: 'All',
       calendarMode: 'all',
       calendarFamilyFilter: 'all',
+      calendarMobileView: 'agenda',
       calendarMonth: currentMonthKey(),
-      myMemberView: 0,
+      selectedMember: null,
       activeActor: 0,
+      activityFilter: 'all',
       members: ['Family Member 1', 'Family Member 2', 'Family Member 3'],
       tasks: [],
       payments: [],
@@ -1723,13 +2042,12 @@
       paymentList: document.getElementById('paymentList'),
       monthLabel: document.getElementById('monthLabel'),
       calendarModeTabs: document.getElementById('calendarModeTabs'),
+      calendarLayoutTabs: document.getElementById('calendarLayoutTabs'),
       calendarFamilyFilters: document.getElementById('calendarFamilyFilters'),
       weekdayRow: document.getElementById('weekdayRow'),
       calendarGrid: document.getElementById('calendarGrid'),
-      myTabs: document.getElementById('myTabs'),
-      mySummary: document.getElementById('mySummary'),
-      myContent: document.getElementById('myContent'),
-      myRecent: document.getElementById('myRecent'),
+      personFocus: document.getElementById('personFocus'),
+      activityFilters: document.getElementById('activityFilters'),
       activityLog: document.getElementById('activityLog'),
       dayPreviewBackdrop: document.getElementById('dayPreviewBackdrop'),
       editorBackdrop: document.getElementById('editorBackdrop'),
@@ -1738,6 +2056,7 @@
       themeToggle: document.getElementById('themeToggle'),
       exportBtn: document.getElementById('exportBtn'),
       resetBtn: document.getElementById('resetBtn'),
+      toggleActivityLog: document.getElementById('toggleActivityLog'),
       prevMonth: document.getElementById('prevMonth'),
       nextMonth: document.getElementById('nextMonth'),
       taskTitle: document.getElementById('taskTitle'),
@@ -1802,6 +2121,13 @@
       els.editorBackdrop.addEventListener('change', refreshEventConflictBanner);
       els.dayPreviewBackdrop.addEventListener('click', e => { if (e.target === els.dayPreviewBackdrop) closeDayPreview(); });
       els.editorBackdrop.addEventListener('click', e => { if (e.target === els.editorBackdrop) closeEditor(); });
+      window.addEventListener('resize', handleResize);
+    }
+
+    function handleResize() {
+      renderCalendarControls();
+      renderCalendar();
+      renderActivityLog();
     }
 
     function handleGlobalKeydown(event) {
@@ -1866,8 +2192,21 @@
         state.calendarFamilyFilter = t.closest('[data-member-filter]').dataset.memberFilter;
         return persistAndRender();
       }
-      if (t.closest('[data-my-member]')) {
-        state.myMemberView = Number(t.closest('[data-my-member]').dataset.myMember);
+      if (t.closest('[data-calendar-layout]')) {
+        state.calendarMobileView = t.closest('[data-calendar-layout]').dataset.calendarLayout;
+        return persistAndRender();
+      }
+      if (t.closest('[data-select-member]')) {
+        const index = Number(t.closest('[data-select-member]').dataset.selectMember);
+        state.selectedMember = state.selectedMember === index ? null : index;
+        return persistAndRender();
+      }
+      if (t.closest('[data-person-filter]')) {
+        applyPersonFocusFilter(t.closest('[data-person-filter]').dataset.personFilter);
+        return persistAndRender();
+      }
+      if (t.closest('[data-activity-filter]')) {
+        state.activityFilter = t.closest('[data-activity-filter]').dataset.activityFilter;
         return persistAndRender();
       }
 
@@ -1912,13 +2251,13 @@
       populateMemberSelects();
       renderStats();
       renderFamilyStrip();
+      renderPersonFocus();
       renderTaskFilters();
       renderTasks();
       renderPaymentFilters();
       renderPayments();
       renderCalendarControls();
       renderCalendar();
-      renderMyTab();
       renderActivityLog();
       renderDayPreview();
       renderEditor();
@@ -1957,41 +2296,116 @@
     }
 
     function renderFamilyStrip() {
+      const descriptors = ['Lavender Lane', 'Deep Navy Lane', 'Teal Lane'];
       const weekEnd = addDays(todayISO(), 7);
       els.familyStrip.innerHTML = state.members.map((member, index) => {
         const activeTasks = state.tasks.filter(task => task.assignedTo === member && task.status !== 'Done').length;
         const completed = state.tasks.filter(task => task.completedBy === member).length;
-        const owed = state.payments.filter(payment => payment.assignedTo === member && payment.status !== 'Paid');
+        const owed = sumAmounts(state.payments.filter(payment => payment.assignedTo === member && payment.status !== 'Paid'));
         const dueSoon = state.tasks.filter(task => task.assignedTo === member && task.status !== 'Done').filter(task => {
           const nextDue = nextTaskOccurrence(task, todayISO());
           return nextDue && nextDue >= todayISO() && nextDue <= weekEnd;
         }).length;
+        const selected = state.selectedMember === index;
         return `
-          <article class="family-card m${index}">
+          <button class="family-card family-card-button m${index} ${selected ? 'selected' : ''}" type="button" data-select-member="${index}" aria-expanded="${selected ? 'true' : 'false'}" aria-label="${escapeAttr(member)}, ${activeTasks} active tasks, ${money(owed)} owed, ${selected ? 'expanded' : 'collapsed'}">
             <div class="family-accent"></div>
-            <div class="family-card-body m${index}">
+            <div class="family-card-body">
               <div class="family-top">
                 <div class="family-name-wrap">
                   <span class="member-dot" aria-hidden="true"></span>
-                  <input class="family-name-input" data-member-index="${index}" value="${escapeAttr(member)}" aria-label="Family member ${index + 1} name" />
+                  <div>
+                    <div class="family-name-text">${escapeHtml(member)}</div>
+                    <div class="family-descriptor">${escapeHtml(descriptors[index] || 'Family lane')}</div>
+                  </div>
                 </div>
-                <span class="status-chip">${dueSoon} due this week</span>
+                <span class="family-chevron" aria-hidden="true">${selected ? '▴' : '▾'}</span>
               </div>
-              <div class="family-stats">
-                <div class="mini-stat"><div class="mini-stat-label">Active tasks</div><div class="mini-stat-value">${activeTasks}</div></div>
-                <div class="mini-stat"><div class="mini-stat-label">Completed</div><div class="mini-stat-value">${completed}</div></div>
-                <div class="mini-stat"><div class="mini-stat-label">Owed</div><div class="mini-stat-value">${escapeHtml(money(sumAmounts(owed)))}</div></div>
+              <div class="family-inline-stats">
+                <span><strong>${activeTasks}</strong> Active</span>
+                <span><strong>${completed}</strong> Done</span>
+                <span><strong>${escapeHtml(money(owed))}</strong> Owed</span>
               </div>
+              <div class="family-foot-note">${dueSoon} due this week</div>
             </div>
-          </article>
+          </button>
         `;
       }).join('');
     }
 
+    function renderPersonFocus() {
+      if (state.selectedMember === null || state.selectedMember === undefined) {
+        els.personFocus.classList.add('hidden');
+        els.personFocus.innerHTML = '';
+        return;
+      }
+      const index = clampMemberIndex(state.selectedMember);
+      const member = state.members[index];
+      const descriptors = ['Lavender Lane', 'Deep Navy Lane', 'Teal Lane'];
+      const activeTasks = state.tasks.filter(task => task.assignedTo === member && task.status !== 'Done').sort(taskSort);
+      const owedPayments = state.payments.filter(payment => payment.assignedTo === member && payment.status !== 'Paid').sort(paymentSort);
+      const paidItems = state.payments.filter(payment => payment.assignedTo === member && payment.status === 'Paid').length;
+      const completed = state.tasks.filter(task => task.completedBy === member).sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || '')).slice(0, 3);
+
+      els.personFocus.classList.remove('hidden');
+      els.personFocus.innerHTML = `
+        <div class="person-focus-head">
+          <div class="person-identity m${index}">
+            <span class="member-dot" aria-hidden="true"></span>
+            <div>
+              <div class="person-name">${escapeHtml(member)}</div>
+              <div class="person-descriptor">${escapeHtml(descriptors[index] || 'Family lane')} · ${activeTasks.length} active task${activeTasks.length === 1 ? '' : 's'}</div>
+            </div>
+          </div>
+          <div class="person-metrics">
+            <div class="focus-metric"><div class="mini-stat-label">Picked up</div><div class="mini-stat-value">${activeTasks.length}</div></div>
+            <div class="focus-metric"><div class="mini-stat-label">Still owed</div><div class="mini-stat-value">${escapeHtml(money(sumAmounts(owedPayments)))}</div></div>
+            <div class="focus-metric"><div class="mini-stat-label">Paid items</div><div class="mini-stat-value">${paidItems}</div></div>
+          </div>
+        </div>
+        <div class="person-filter-row">
+          <button class="pill-btn ${state.taskFilter === 'All' && state.paymentFilter === 'All' ? 'active' : ''}" type="button" data-person-filter="all">All items</button>
+          <button class="pill-btn ${state.taskFilter === `member:${index}` ? 'active' : ''}" type="button" data-person-filter="tasks">This person's tasks</button>
+          <button class="pill-btn ${state.paymentFilter === `member:${index}` ? 'active' : ''}" type="button" data-person-filter="payments">This person's payments</button>
+          <button class="pill-btn" type="button" data-person-filter="clear">Clear filters</button>
+        </div>
+        <div class="person-focus-grid">
+          <article class="focus-card">
+            <div class="focus-card-head">
+              <h3>Active tasks</h3>
+              <button class="link-btn" type="button" data-person-filter="tasks">View all tasks</button>
+            </div>
+            <div class="compact-list">${activeTasks.length ? activeTasks.slice(0, 3).map(task => compactTask(task)).join('') : `<div class="empty slim">No active tasks for this person right now.</div>`}</div>
+          </article>
+          <article class="focus-card">
+            <div class="focus-card-head">
+              <h3>Assigned payments</h3>
+              <button class="link-btn" type="button" data-person-filter="payments">View all payments</button>
+            </div>
+            <div class="compact-list">${owedPayments.length ? owedPayments.slice(0, 3).map(payment => compactPayment(payment)).join('') : `<div class="empty slim">No unpaid items assigned to this person.</div>`}</div>
+          </article>
+          <article class="focus-card">
+            <div class="focus-card-head">
+              <h3>Recently completed</h3>
+              <button class="link-btn" type="button" data-person-filter="clear">View full history</button>
+            </div>
+            <div class="compact-list">${completed.length ? completed.map(task => `
+              <div class="compact-item">
+                <div class="compact-item-title"><span>${escapeHtml(task.title)}</span><span>${task.completedAt ? escapeHtml(formatDate(task.completedAt.slice(0,10))) : ''}</span></div>
+                <div class="compact-meta"><span>${task.tag ? escapeHtml(task.tag) : 'Task'}</span><span>${escapeHtml(task.status)}</span></div>
+              </div>
+            `).join('') : `<div class="empty slim">Nothing completed yet for this person.</div>`}</div>
+          </article>
+        </div>
+      `;
+    }
+
     function renderTaskFilters() {
       const filters = ['All', 'Open', 'Claimed', 'Done'];
-      els.taskFilters.innerHTML = filters.map(label => `
-        <button class="pill-btn ${state.taskFilter === label ? 'active' : ''}" type="button" data-task-filter="${label}">${label}</button>
+      const contextual = state.selectedMember !== null ? [[`member:${state.selectedMember}`, `Assigned to ${state.members[state.selectedMember]}`]] : [];
+      const allFilters = filters.map(label => [label, label]).concat(contextual);
+      els.taskFilters.innerHTML = allFilters.map(([key, label]) => `
+        <button class="pill-btn ${state.taskFilter === key ? 'active' : ''}" type="button" data-task-filter="${escapeAttr(key)}">${escapeHtml(label)}</button>
       `).join('');
     }
 
@@ -2006,8 +2420,10 @@
 
     function renderPaymentFilters() {
       const filters = ['All', 'Unpaid', 'Partial', 'Paid'];
-      els.paymentFilters.innerHTML = filters.map(label => `
-        <button class="pill-btn ${state.paymentFilter === label ? 'active' : ''}" type="button" data-payment-filter="${label}">${label}</button>
+      const contextual = state.selectedMember !== null ? [[`member:${state.selectedMember}`, `Handled by ${state.members[state.selectedMember]}`]] : [];
+      const allFilters = filters.map(label => [label, label]).concat(contextual);
+      els.paymentFilters.innerHTML = allFilters.map(([key, label]) => `
+        <button class="pill-btn ${state.paymentFilter === key ? 'active' : ''}" type="button" data-payment-filter="${escapeAttr(key)}">${escapeHtml(label)}</button>
       `).join('');
     }
 
@@ -2030,18 +2446,35 @@
       els.calendarModeTabs.innerHTML = modes.map(([key, label]) => `
         <button class="seg-btn ${state.calendarMode === key ? 'active' : ''}" type="button" data-calendar-mode="${key}">${label}</button>
       `).join('');
+      if (els.calendarLayoutTabs) {
+        els.calendarLayoutTabs.innerHTML = [['agenda', 'Agenda'], ['month', 'Month']].map(([key, label]) => `
+          <button class="seg-btn ${state.calendarMobileView === key ? 'active' : ''}" type="button" data-calendar-layout="${key}">${label}</button>
+        `).join('');
+      }
       const filters = ['all', '0', '1', '2'];
       els.calendarFamilyFilters.innerHTML = filters.map(filter => {
         if (filter === 'all') {
-          return `<button class="pill-btn calendar-filter ${state.calendarFamilyFilter === 'all' ? 'active' : ''}" type="button" data-member-filter="all">All family</button>`;
+          const active = state.calendarFamilyFilter === 'all';
+          return `<button class="pill-btn calendar-filter ${active ? 'active' : ''}" type="button" data-member-filter="all">All</button>`;
         }
         const index = Number(filter);
-        return `<button class="pill-btn calendar-filter member m${index} ${state.calendarFamilyFilter === filter ? 'active' : ''}" type="button" data-member-filter="${filter}">${escapeHtml(state.members[index])}</button>`;
+        const active = state.calendarFamilyFilter === filter;
+        const suggested = !active && state.calendarFamilyFilter === 'all' && state.selectedMember === index;
+        return `<button class="pill-btn calendar-filter member m${index} ${active ? 'active' : ''} ${suggested ? 'suggested' : ''}" type="button" data-member-filter="${filter}">${escapeHtml(state.members[index])}</button>`;
       }).join('');
       els.weekdayRow.innerHTML = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => `<div class="weekday">${day}</div>`).join('');
     }
 
     function renderCalendar() {
+      const isMobile = window.innerWidth <= 900;
+      const useAgenda = isMobile && state.calendarMobileView !== 'month';
+      els.weekdayRow.style.display = useAgenda ? 'none' : 'grid';
+      if (useAgenda) {
+        els.calendarGrid.innerHTML = renderAgendaCalendar();
+        bindCalendarDnD();
+        return;
+      }
+
       const { year, monthIndex } = monthParts(state.calendarMonth);
       const first = new Date(year, monthIndex, 1);
       const startOffset = first.getDay();
@@ -2059,7 +2492,7 @@
         const title = items.length ? items.slice(0, 5).map(item => item.kind === 'event'
           ? `${item.time ? formatTime(item.time) + ' - ' : ''}${item.title}`
           : `${item.title}${item.status === 'Done' ? ' (done)' : ''}`
-        ).join('\n') : 'No items';
+        ).join('\\n') : 'No items';
         cells.push(`
           <button class="day-cell ${inMonth ? '' : 'outside'} ${iso === today ? 'today' : ''}" type="button" data-day-open="${iso}" data-day-cell="${iso}" title="${escapeAttr(title)}">
             <div class="day-number">${date.getDate()}</div>
@@ -2073,41 +2506,51 @@
       bindCalendarDnD();
     }
 
-    function renderMyTab() {
-      els.myTabs.innerHTML = state.members.map((member, index) => `
-        <button class="tab-btn member m${index} ${state.myMemberView === index ? 'active' : ''}" type="button" data-my-member="${index}">${escapeHtml(member)}</button>
-      `).join('');
-      const member = state.members[state.myMemberView];
-      const activeTasks = state.tasks.filter(task => task.assignedTo === member && task.status !== 'Done').sort(taskSort);
-      const owedPayments = state.payments.filter(payment => payment.assignedTo === member && payment.status !== 'Paid').sort(paymentSort);
-      const paidItems = state.payments.filter(payment => payment.assignedTo === member && payment.status === 'Paid').length;
-      const completed = state.tasks.filter(task => task.completedBy === member).sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || '')).slice(0, 4);
+    function renderAgendaCalendar() {
+      const today = todayISO();
+      const endWeek = addDays(today, 6);
+      const endUpcoming = addDays(today, 21);
+      const dates = [];
+      for (let cursor = today; cursor <= endUpcoming; cursor = addDays(cursor, 1)) dates.push(cursor);
 
-      els.mySummary.innerHTML = `
-        <div class="my-summary-card"><div class="mini-stat-label">Picked up</div><div class="mini-stat-value">${activeTasks.length}</div></div>
-        <div class="my-summary-card"><div class="mini-stat-label">Still owed</div><div class="mini-stat-value">${escapeHtml(money(sumAmounts(owedPayments)))}</div></div>
-        <div class="my-summary-card"><div class="mini-stat-label">Paid items</div><div class="mini-stat-value">${paidItems}</div></div>
-      `;
-
-      els.myContent.innerHTML = `
-        <div class="my-column-card">
-          <h3 class="column-title">Tasks picked up</h3>
-          <div class="compact-list">${activeTasks.length ? activeTasks.slice(0, 5).map(task => compactTask(task)).join('') : `<div class="empty">No active tasks here. Rare and suspicious.</div>`}</div>
-        </div>
-        <div class="my-column-card">
-          <h3 class="column-title">Payments assigned</h3>
-          <div class="compact-list">${owedPayments.length ? owedPayments.slice(0, 5).map(payment => compactPayment(payment)).join('') : `<div class="empty">No unpaid items assigned right now.</div>`}</div>
-        </div>
-      `;
-
-      els.myRecent.innerHTML = `
-        <div class="column-title">Recently completed</div>
-        <div class="compact-list">${completed.length ? completed.map(task => `
-          <div class="compact-item">
-            <div class="compact-item-title"><span>${escapeHtml(task.title)}</span><span>${task.completedAt ? escapeHtml(formatDate(task.completedAt.slice(0,10))) : ''}</span></div>
-            <div class="compact-meta"><span class="inline-member-tag m${state.myMemberView}">${escapeHtml(member)}</span>${task.tag ? `<span>${escapeHtml(task.tag)}</span>` : ''}</div>
+      const section = (title, helper, list) => `
+        <div class="agenda-section">
+          <div class="agenda-head">
+            <div>
+              <div class="column-title">${title}</div>
+              <div class="muted-note">${helper}</div>
+            </div>
           </div>
-        `).join('') : `<div class="empty">Nothing completed yet for this member. The glory log is blank.</div>`}</div>
+          <div class="agenda-list">
+            ${list.length ? list.map(item => `
+              <button class="agenda-item" type="button" data-day-open="${item.date}">
+                <div class="agenda-date">
+                  <strong>${escapeHtml(formatDate(item.date))}</strong>
+                  <span>${escapeHtml(item.date === today ? 'Today' : item.date <= endWeek ? 'This week' : 'Upcoming')}</span>
+                </div>
+                <div class="agenda-main">
+                  <div class="agenda-title-row">
+                    ${calendarChip(item)}
+                  </div>
+                  <div class="agenda-copy">${escapeHtml(item.kind === 'event' ? (item.note || item.details || item.location || 'Tap to preview and edit this day.') : (item.note || item.details || 'Tap to preview and edit this day.'))}</div>
+                </div>
+              </button>
+            `).join('') : `<div class="empty slim">Nothing here right now. A rare patch of peace.</div>`}
+          </div>
+        </div>
+      `;
+
+      const items = dates.flatMap(date => getCalendarItemsForDate(date).map(item => ({ ...item, date })));
+      const todayItems = items.filter(item => item.date === today).slice(0, 6);
+      const weekItems = items.filter(item => item.date > today && item.date <= endWeek).slice(0, 8);
+      const upcomingItems = items.filter(item => item.date > endWeek).slice(0, 10);
+
+      return `
+        <div class="agenda-wrap">
+          ${section('Today', 'What needs attention now.', todayItems)}
+          ${section('This week', 'The next few days without the tiny month-grid squint test.', weekItems)}
+          ${section('Upcoming', 'Later items worth keeping in your peripheral vision.', upcomingItems)}
+        </div>
       `;
     }
 
@@ -2993,36 +3436,56 @@
       safe.activity = Array.isArray(safe.activity) ? safe.activity.map(entry => ({
         id: String(entry.id || uid()),
         actor: safe.members.includes(entry.actor) ? entry.actor : String(entry.actor || safe.members[0]),
+        kind: ['task', 'payment', 'event', 'member', 'general'].includes(entry.kind) ? entry.kind : inferActivityKind(String(entry.message || '')),
         message: String(entry.message || ''),
         at: String(entry.at || new Date().toISOString())
       })).slice(0, 100) : [];
-      if (!['All', 'Open', 'Claimed', 'Done'].includes(safe.taskFilter)) safe.taskFilter = 'All';
-      if (!['All', 'Unpaid', 'Partial', 'Paid'].includes(safe.paymentFilter)) safe.paymentFilter = 'All';
+      if (!['All', 'Open', 'Claimed', 'Done'].includes(safe.taskFilter) && !/^member:\d$/.test(String(safe.taskFilter || ''))) safe.taskFilter = 'All';
+      if (!['All', 'Unpaid', 'Partial', 'Paid'].includes(safe.paymentFilter) && !/^member:\d$/.test(String(safe.paymentFilter || ''))) safe.paymentFilter = 'All';
       if (!['tasks', 'events', 'all'].includes(safe.calendarMode)) safe.calendarMode = 'all';
+      if (!['agenda', 'month'].includes(safe.calendarMobileView)) safe.calendarMobileView = 'agenda';
       if (!['all', '0', '1', '2'].includes(String(safe.calendarFamilyFilter))) safe.calendarFamilyFilter = 'all';
       if (!/^\d{4}-\d{2}$/.test(String(safe.calendarMonth || ''))) safe.calendarMonth = currentMonthKey();
-      safe.myMemberView = [0,1,2].includes(Number(safe.myMemberView)) ? Number(safe.myMemberView) : 0;
+      safe.selectedMember = [0, 1, 2].includes(Number(safe.selectedMember)) ? Number(safe.selectedMember) : null;
       safe.activeActor = clampMemberIndex(Number(safe.activeActor));
+      safe.activityFilter = ['all', 'tasks', 'payments', 'events', 'member:0', 'member:1', 'member:2'].includes(String(safe.activityFilter)) ? String(safe.activityFilter) : 'all';
       safe.theme = safe.theme === 'dark' ? 'dark' : 'light';
       safe.activityExpanded = Boolean(safe.activityExpanded);
       return safe;
     }
 
     function renderActivityLog() {
+      if (els.activityFilters) {
+        const filters = [
+          ['all', 'All activity'],
+          ['tasks', 'Tasks'],
+          ['payments', 'Payments'],
+          ['events', 'Events'],
+          ['member:0', state.members[0]],
+          ['member:1', state.members[1]],
+          ['member:2', state.members[2]]
+        ];
+        els.activityFilters.innerHTML = filters.map(([key, label]) => `
+          <button class="pill-btn ${state.activityFilter === key ? 'active' : ''}" type="button" data-activity-filter="${escapeAttr(key)}">${escapeHtml(label)}</button>
+        `).join('');
+      }
+
       if (!els.activityLog) return;
-      if (!state.activity.length) {
-        els.activityLog.innerHTML = `<div class="empty">No activity yet. Once people start editing, moving, or completing things, the breadcrumb trail shows up here.</div>`;
+      const entries = filteredActivity();
+      if (!entries.length) {
+        els.activityLog.innerHTML = `<div class="empty">No activity in this filter yet. The breadcrumb trail is quiet for the moment.</div>`;
         return;
       }
-      const total = state.activity.length;
-      const visibleCount = state.activityExpanded ? 24 : 6;
-      const visible = state.activity.slice(0, visibleCount);
+      const total = entries.length;
+      const isMobile = window.innerWidth <= 900;
+      const visibleCount = state.activityExpanded ? (isMobile ? 18 : 24) : (isMobile ? 3 : 6);
+      const visible = entries.slice(0, visibleCount);
       const hidden = Math.max(0, total - visible.length);
-      const latest = state.activity[0];
+      const latest = entries[0];
       els.activityLog.innerHTML = `
         <div class="activity-summary-strip">
           <div class="activity-summary-card">
-            <div class="mini-stat-label">Tracked changes</div>
+            <div class="mini-stat-label">Visible changes</div>
             <div class="mini-stat-value">${total}</div>
           </div>
           <div class="activity-summary-card latest">
@@ -3033,12 +3496,14 @@
         <div class="activity-list ${state.activityExpanded ? 'expanded' : 'collapsed'}">
           ${visible.map(entry => {
             const idx = Math.max(0, state.members.indexOf(entry.actor));
+            const label = entry.kind === 'task' ? 'Task' : entry.kind === 'payment' ? 'Payment' : entry.kind === 'event' ? 'Event' : entry.kind === 'member' ? 'Family' : 'Update';
             return `
               <article class="activity-item">
                 <div class="activity-topline">
                   <div class="activity-actor m${idx}"><span class="member-dot"></span>${escapeHtml(entry.actor)}</div>
                   <div class="activity-time">${escapeHtml(formatDateTime(entry.at))}</div>
                 </div>
+                <div class="compact-meta"><span>${label}</span></div>
                 <div class="activity-message">${escapeHtml(entry.message)}</div>
               </article>
             `;
@@ -3056,8 +3521,53 @@
       return state.members[clampMemberIndex(state.activeActor)] || state.members[0];
     }
 
-    function logActivity(message, actor = activeActorName()) {
-      state.activity.unshift({ id: uid(), actor, message, at: new Date().toISOString() });
+    function applyPersonFocusFilter(mode) {
+      if (state.selectedMember === null || state.selectedMember === undefined) {
+        state.taskFilter = 'All';
+        state.paymentFilter = 'All';
+        return;
+      }
+      const memberKey = `member:${clampMemberIndex(state.selectedMember)}`;
+      if (mode === 'tasks') {
+        state.taskFilter = memberKey;
+        state.paymentFilter = 'All';
+        return;
+      }
+      if (mode === 'payments') {
+        state.paymentFilter = memberKey;
+        state.taskFilter = 'All';
+        return;
+      }
+      state.taskFilter = 'All';
+      state.paymentFilter = 'All';
+      if (mode === 'clear') state.calendarFamilyFilter = 'all';
+    }
+
+    function inferActivityKind(message) {
+      const lower = String(message || '').toLowerCase();
+      if (lower.includes('payment') || lower.includes('bill')) return 'payment';
+      if (lower.includes('appointment') || lower.includes('event')) return 'event';
+      if (lower.includes('renamed')) return 'member';
+      if (lower.includes('task')) return 'task';
+      return 'general';
+    }
+
+    function filteredActivity() {
+      return state.activity.filter(entry => {
+        if (state.activityFilter === 'all') return true;
+        if (state.activityFilter === 'tasks') return entry.kind === 'task';
+        if (state.activityFilter === 'payments') return entry.kind === 'payment';
+        if (state.activityFilter === 'events') return entry.kind === 'event';
+        if (/^member:\d$/.test(state.activityFilter)) {
+          const member = state.members[Number(state.activityFilter.split(':')[1])];
+          return entry.actor === member;
+        }
+        return true;
+      });
+    }
+
+    function logActivity(message, actor = activeActorName(), kind = inferActivityKind(message)) {
+      state.activity.unshift({ id: uid(), actor, kind, message, at: new Date().toISOString() });
       state.activity = state.activity.slice(0, 100);
     }
 
@@ -3256,13 +3766,24 @@
     function filteredTasks() {
       return state.tasks.filter(task => {
         if (state.taskFilter === 'All') return true;
+        if (/^member:\d$/.test(String(state.taskFilter))) {
+          const member = state.members[Number(String(state.taskFilter).split(':')[1])];
+          return task.assignedTo === member;
+        }
         if (state.taskFilter === 'Done') return task.recurrence === 'none' && task.status === 'Done';
         return task.status === state.taskFilter;
       });
     }
 
     function filteredPayments() {
-      return state.payments.filter(payment => state.paymentFilter === 'All' ? true : payment.status === state.paymentFilter);
+      return state.payments.filter(payment => {
+        if (state.paymentFilter === 'All') return true;
+        if (/^member:\d$/.test(String(state.paymentFilter))) {
+          const member = state.members[Number(String(state.paymentFilter).split(':')[1])];
+          return payment.assignedTo === member;
+        }
+        return payment.status === state.paymentFilter;
+      });
     }
 
     function taskSort(a, b) {
@@ -3364,14 +3885,6 @@
 
     function escapeAttr(value) {
       return escapeHtml(value).replaceAll('`', '&#96;');
-    }
-  </script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-      });
     }
   </script>
 </body>
