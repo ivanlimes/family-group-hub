@@ -817,37 +817,6 @@
       font-weight: 700;
     }
 
-    .my-tabs .tab-btn {
-      min-height: 40px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--surface-2);
-      padding: 0 12px;
-      font-weight: 700;
-      color: var(--text-soft);
-      position: relative;
-    }
-
-    .my-tabs .tab-btn.active {
-      color: var(--text);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .my-tabs .tab-btn.member.active {
-      padding-left: 28px;
-    }
-
-    .my-tabs .tab-btn.member.active::before {
-      content: "";
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      transform: translateY(-50%);
-    }
-
     .my-summary {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1377,11 +1346,6 @@
       .controls-row .pill-group,
       .controls-row .segment-group,
       .calendar-filter-row,
-      .my-tabs {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-bottom: 4px;
-      }
 
       .calendar-grid-wrap {
         overflow-x: auto;
