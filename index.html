@@ -362,11 +362,11 @@
       gap: 16px;
     }
 
-    .main-row .panel { min-height: 580px; }
-    .secondary-row .panel { min-height: 620px; }
+    .main-row .panel { min-height: 0; }
+    .secondary-row .panel { min-height: 0; }
 
     .panel-header {
-      min-height: 72px;
+      min-height: 0;
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
@@ -525,7 +525,7 @@
     }
 
     .main-row .list-region {
-      max-height: 440px;
+      max-height: min(52vh, 520px);
     }
 
     .list-card {
@@ -1864,17 +1864,70 @@
     }
 
     .family-dropdown .person-focus-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: 1fr;
+      gap: 12px;
     }
 
     .family-dropdown .focus-card {
       min-height: 0;
+      min-width: 0;
       background: var(--surface);
+      padding: 12px;
+      gap: 8px;
     }
 
     .family-dropdown .compact-list {
       display: grid;
       gap: 8px;
+      min-width: 0;
+    }
+
+    .family-card-button,
+    .family-card-body,
+    .family-dropdown,
+    .family-dropdown-head,
+    .person-identity,
+    .person-metrics,
+    .focus-metric,
+    .family-inline-stats,
+    .family-inline-stats span,
+    .focus-card-head,
+    .compact-item,
+    .compact-item-title,
+    .compact-item-title span,
+    .compact-note,
+    .person-name,
+    .family-name-text,
+    .family-descriptor {
+      min-width: 0;
+    }
+
+    .family-card-button {
+      width: 100%;
+      padding: 0;
+      text-align: left;
+    }
+
+    .compact-item-title {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+    }
+
+    .compact-item-title span:first-child,
+    .compact-note,
+    .person-name,
+    .family-name-text,
+    .family-descriptor {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .compact-item-title span:last-child {
+      color: var(--text-faint);
+      white-space: nowrap;
+      font-size: 11px;
+      line-height: 16px;
     }
 
     .family-accordion .person-filter-row {
@@ -1890,14 +1943,37 @@
     }
 
     @media (max-width: 900px) {
+      .family-strip {
+        grid-template-columns: 1fr;
+      }
+
       .family-dropdown {
         padding: 14px;
+        gap: 12px;
       }
 
       .family-dropdown-head,
-      .family-dropdown .person-metrics,
       .family-dropdown .person-focus-grid {
         grid-template-columns: 1fr;
+      }
+
+      .family-dropdown .person-metrics {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .family-dropdown .person-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .family-dropdown .focus-card,
+      .compact-item {
+        padding: 10px;
+      }
+
+      .family-inline-stats {
+        gap: 6px;
       }
     }
 
@@ -1926,7 +2002,6 @@
 
     <section class="stats-grid" id="statsGrid"></section>
     <section class="family-strip" id="familyStrip"></section>
-    <section class="panel person-focus-panel hidden" id="personFocus" hidden></section>
 
     <section class="workspace-row main-row">
       <section class="panel">
@@ -2153,7 +2228,6 @@
       calendarFamilyFilters: document.getElementById('calendarFamilyFilters'),
       weekdayRow: document.getElementById('weekdayRow'),
       calendarGrid: document.getElementById('calendarGrid'),
-      personFocus: document.getElementById('personFocus'),
       activityFilters: document.getElementById('activityFilters'),
       activityLog: document.getElementById('activityLog'),
       dayPreviewBackdrop: document.getElementById('dayPreviewBackdrop'),
@@ -2412,7 +2486,7 @@
       const completed = state.tasks
         .filter(task => task.completedBy === member)
         .sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''))
-        .slice(0, 3);
+        .slice(0, 4);
 
       return `
         <div class="family-dropdown-head">
@@ -2441,21 +2515,21 @@
               <h3>Active tasks</h3>
               <button class="link-btn" type="button" data-person-filter="tasks">View all tasks</button>
             </div>
-            <div class="compact-list">${activeTasks.length ? activeTasks.slice(0, 3).map(task => compactTask(task)).join('') : `<div class="empty slim">No active tasks for this person right now.</div>`}</div>
+            <div class="compact-list">${activeTasks.length ? activeTasks.slice(0, 2).map(task => compactTask(task)).join('') : `<div class="empty slim">No active tasks for this person right now.</div>`}</div>
           </article>
           <article class="focus-card">
             <div class="focus-card-head">
               <h3>Assigned payments</h3>
               <button class="link-btn" type="button" data-person-filter="payments">View all payments</button>
             </div>
-            <div class="compact-list">${owedPayments.length ? owedPayments.slice(0, 3).map(payment => compactPayment(payment)).join('') : `<div class="empty slim">No unpaid items assigned to this person.</div>`}</div>
+            <div class="compact-list">${owedPayments.length ? owedPayments.slice(0, 2).map(payment => compactPayment(payment)).join('') : `<div class="empty slim">No unpaid items assigned to this person.</div>`}</div>
           </article>
           <article class="focus-card">
             <div class="focus-card-head">
               <h3>Recently completed</h3>
               <button class="link-btn" type="button" data-person-filter="clear">View full history</button>
             </div>
-            <div class="compact-list">${completed.length ? completed.map(task => `
+            <div class="compact-list">${completed.length ? completed.slice(0, 2).map(task => `
               <div class="compact-item">
                 <div class="compact-item-title"><span>${escapeHtml(task.title)}</span><span>${task.completedAt ? escapeHtml(formatDate(task.completedAt.slice(0,10))) : ''}</span></div>
                 <div class="compact-meta"><span>${task.tag ? escapeHtml(task.tag) : 'Task'}</span><span>${escapeHtml(task.status)}</span></div>
@@ -2508,8 +2582,7 @@
     }
 
     function renderPersonFocus() {
-      els.personFocus.classList.add('hidden');
-      els.personFocus.innerHTML = '';
+      return;
     }
 
 

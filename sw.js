@@ -1,5 +1,5 @@
-const CACHE_NAME = 'family-group-hub-layout-v3';
-const ASSETS = ['./', './index.html?v=layoutv3', './index.html', './manifest.webmanifest'];
+const CACHE_NAME = 'family-group-hub-layout-v4';
+const ASSETS = ['./', './index.html?v=layoutv4', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -26,6 +26,6 @@ self.addEventListener('fetch', event => {
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html?v=layoutv3') || caches.match('./index.html')))
+      .catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html?v=layoutv4') || caches.match('./index.html')))
   );
 });
