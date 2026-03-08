@@ -1,0 +1,11 @@
+{
+  "name": "Family Group Hub",
+  "short_name": "Family Hub",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef1f5",
+  "theme_color": "#243244",
+  "description": "Shared family dashboard for tasks, payments, appointments, and planning.",
+  "icons": []
+}

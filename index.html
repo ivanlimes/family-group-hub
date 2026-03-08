@@ -1,0 +1,3378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Family Group Hub</title>
+  <meta name="theme-color" content="#243244" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef1f5;
+      --bg-accent: #e7ecf3;
+      --surface: #ffffff;
+      --surface-2: #f5f7fb;
+      --surface-3: #eef2f7;
+      --border: #d7dde6;
+      --border-strong: #c2cad7;
+      --text: #142031;
+      --text-soft: #4d5a6e;
+      --text-faint: #728096;
+      --shadow: 0 18px 44px rgba(20, 32, 49, 0.08);
+      --shadow-soft: 0 8px 20px rgba(20, 32, 49, 0.06);
+      --focus: #6b8dcf;
+      --danger: #b54242;
+      --danger-soft: #fce2e2;
+      --success: #2e7b50;
+      --success-soft: #dcf4e6;
+      --warning: #9a6a18;
+      --warning-soft: #f8ead0;
+      --member-0: #8070b8;
+      --member-0-soft: rgba(128, 112, 184, 0.12);
+      --member-1: #1f3760;
+      --member-1-soft: rgba(31, 55, 96, 0.12);
+      --member-2: #1f7f84;
+      --member-2-soft: rgba(31, 127, 132, 0.12);
+      --panel-radius: 20px;
+      --card-radius: 16px;
+      --input-radius: 12px;
+      --pill-radius: 999px;
+      --section-gap: 24px;
+      --panel-pad: 20px;
+      --fast: 180ms;
+      --grid-gap: 24px;
+      --container: 1320px;
+    }
+
+    body.dark {
+      color-scheme: dark;
+      --bg: #151b24;
+      --bg-accent: #111821;
+      --surface: #1d2531;
+      --surface-2: #222c39;
+      --surface-3: #273240;
+      --border: #324050;
+      --border-strong: #425468;
+      --text: #f5f7fb;
+      --text-soft: #c4cfdd;
+      --text-faint: #98a7bc;
+      --shadow: 0 18px 44px rgba(0, 0, 0, 0.32);
+      --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.24);
+      --focus: #8aa8e6;
+      --danger-soft: rgba(181, 66, 66, 0.24);
+      --success-soft: rgba(46, 123, 80, 0.24);
+      --warning-soft: rgba(154, 106, 24, 0.28);
+      --member-0-soft: rgba(128, 112, 184, 0.2);
+      --member-1-soft: rgba(31, 55, 96, 0.3);
+      --member-2-soft: rgba(31, 127, 132, 0.24);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg-accent) 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+      color: inherit;
+    }
+
+    button { cursor: pointer; }
+    button, input, select, textarea, .day-cell, .pill-btn, .seg-btn, .ghost-btn, .primary-btn, .secondary-btn {
+      transition: background-color var(--fast), color var(--fast), border-color var(--fast), box-shadow var(--fast), transform var(--fast);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .app-shell {
+      width: min(calc(100vw - 48px), var(--container));
+      margin: 0 auto;
+      padding: 24px 0 32px;
+      display: grid;
+      gap: var(--section-gap);
+    }
+
+    .utility-bar {
+      min-height: 88px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--panel-radius);
+      box-shadow: var(--shadow-soft);
+      padding: 20px 24px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.9fr);
+      gap: 24px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      line-height: 1.2;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .app-title {
+      font-size: 32px;
+      line-height: 38px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .app-subtitle {
+      margin: 6px 0 0;
+      max-width: 56ch;
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--text-soft);
+    }
+
+    .utility-actions {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .ghost-btn, .secondary-btn, .primary-btn, .pill-btn, .seg-btn {
+      min-height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border-strong);
+      padding: 0 16px;
+      background: var(--surface-2);
+      color: var(--text);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .ghost-btn:hover, .secondary-btn:hover, .seg-btn:hover, .pill-btn:hover {
+      background: var(--surface-3);
+      transform: translateY(-1px);
+    }
+
+    .primary-btn {
+      background: linear-gradient(180deg, #31415b 0%, #243349 100%);
+      border-color: #243349;
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(36, 51, 73, 0.2);
+    }
+
+    body.dark .primary-btn {
+      background: linear-gradient(180deg, #415573 0%, #31445f 100%);
+      border-color: #506684;
+    }
+
+    .ghost-btn.danger {
+      border-color: rgba(181, 66, 66, 0.38);
+      color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .stat-card {
+      min-height: 92px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft);
+      padding: 16px;
+      display: grid;
+      gap: 8px;
+      align-content: center;
+    }
+
+    .stat-card.emphasis {
+      border-color: var(--border-strong);
+      background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--text-faint);
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      line-height: 36px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      line-height: 14px;
+      color: var(--text-faint);
+    }
+
+    .family-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .family-card {
+      min-height: 136px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 8px 1fr;
+    }
+
+    .family-accent { width: 100%; }
+    .family-card.m0 .family-accent { background: var(--member-0); }
+    .family-card.m1 .family-accent { background: var(--member-1); }
+    .family-card.m2 .family-accent { background: var(--member-2); }
+
+    .family-card-body {
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .family-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .family-name-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .member-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+    .m0 .member-dot, .member-pill.m0::before, .calendar-filter[data-member-filter="0"].active::before, .tab-btn.member.active.m0::before { background: var(--member-0); }
+    .m1 .member-dot, .member-pill.m1::before, .calendar-filter[data-member-filter="1"].active::before, .tab-btn.member.active.m1::before { background: var(--member-1); }
+    .m2 .member-dot, .member-pill.m2::before, .calendar-filter[data-member-filter="2"].active::before, .tab-btn.member.active.m2::before { background: var(--member-2); }
+
+    .family-name-input {
+      width: 100%;
+      min-width: 0;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 22px;
+      padding: 0;
+    }
+
+    .status-chip {
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .family-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-stat {
+      min-height: 56px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      padding: 10px 12px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .mini-stat-label { font-size: 11px; line-height: 14px; color: var(--text-faint); }
+    .mini-stat-value { font-size: 18px; line-height: 22px; font-weight: 700; }
+
+    .workspace-row {
+      display: grid;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .main-row, .secondary-row {
+      grid-template-columns: minmax(0, 760px) minmax(0, 536px);
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-soft);
+      padding: var(--panel-pad);
+      min-height: 100%;
+      display: grid;
+      align-content: start;
+      gap: 16px;
+    }
+
+    .main-row .panel { min-height: 580px; }
+    .secondary-row .panel { min-height: 620px; }
+
+    .panel-header {
+      min-height: 72px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .panel-title h2, .panel-title h3 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 26px;
+      font-weight: 700;
+    }
+
+    .panel-title p {
+      margin: 6px 0 0;
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--text-soft);
+      max-width: 56ch;
+    }
+
+    .month-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .month-label {
+      min-width: 160px;
+      text-align: center;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .controls-row {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pill-group, .segment-group, .member-tab-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .seg-btn, .pill-btn {
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-soft);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 700;
+    }
+
+    .seg-btn.active, .pill-btn.active {
+      background: var(--surface-3);
+      border-color: var(--border-strong);
+      color: var(--text);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    .drawer {
+      display: none;
+      padding: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: 16px;
+      margin-top: -4px;
+      margin-bottom: 4px;
+    }
+
+    .drawer.open { display: block; }
+
+    .task-drawer-grid {
+      display: grid;
+      grid-template-columns: 420px 288px;
+      gap: 12px;
+    }
+
+    .task-drawer-grid .row-2 {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 148px 132px 160px 160px minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .task-drawer-grid .row-3, .task-drawer-grid .row-4 {
+      grid-column: 1 / -1;
+    }
+
+    .payment-drawer-grid {
+      display: grid;
+      grid-template-columns: 232px 112px 128px;
+      gap: 12px;
+    }
+
+    .payment-drawer-grid .row-2 {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 154px 154px 1fr;
+      gap: 12px;
+    }
+
+    .payment-drawer-grid .row-3, .payment-drawer-grid .row-4 {
+      grid-column: 1 / -1;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+      min-width: 0;
+    }
+
+    .field label {
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 600;
+      color: var(--text-soft);
+    }
+
+    .input, .select, .textarea {
+      width: 100%;
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text);
+      padding: 10px 12px;
+    }
+
+    .textarea {
+      min-height: 88px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    .list-region {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .main-row .list-region {
+      max-height: 440px;
+    }
+
+    .list-card {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: 16px;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 700;
+    }
+
+    .card-side {
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--text-soft);
+      white-space: nowrap;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 700;
+      max-width: 100%;
+    }
+
+    .chip.status-open { background: var(--surface); }
+    .chip.status-claimed { background: var(--member-1-soft); }
+    .chip.status-done { background: var(--success-soft); color: var(--success); border-color: rgba(46, 123, 80, 0.35); }
+    .chip.status-unpaid { background: var(--danger-soft); color: var(--danger); border-color: rgba(181, 66, 66, 0.35); }
+    .chip.status-partial { background: var(--warning-soft); color: var(--warning); border-color: rgba(154, 106, 24, 0.35); }
+    .chip.status-paid { background: var(--success-soft); color: var(--success); border-color: rgba(46, 123, 80, 0.35); }
+    .chip.overdue { background: var(--danger-soft); color: var(--danger); border-color: rgba(181, 66, 66, 0.35); }
+
+    .member-pill {
+      position: relative;
+      padding-left: 22px;
+      overflow: hidden;
+    }
+    .member-pill::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      transform: translateY(-50%);
+    }
+
+    .member-pill.m0, .preview-badge.member.m0, .inline-member-tag.m0 { background: var(--member-0-soft); }
+    .member-pill.m1, .preview-badge.member.m1, .inline-member-tag.m1 { background: var(--member-1-soft); }
+    .member-pill.m2, .preview-badge.member.m2, .inline-member-tag.m2 { background: var(--member-2-soft); }
+
+    .tab-btn.member.active.m0 { background: var(--member-0); color: #fff; border-color: transparent; box-shadow: 0 0 0 1px rgba(128,112,184,0.22), 0 10px 20px rgba(128,112,184,0.16); }
+    .tab-btn.member.active.m1 { background: var(--member-1); color: #fff; border-color: transparent; box-shadow: 0 0 0 1px rgba(31,55,96,0.22), 0 10px 20px rgba(31,55,96,0.16); }
+    .tab-btn.member.active.m2 { background: var(--member-2); color: #fff; border-color: transparent; box-shadow: 0 0 0 1px rgba(31,127,132,0.22), 0 10px 20px rgba(31,127,132,0.16); }
+
+    body.dark .member-pill,
+    body.dark .calendar-filter.member.active,
+    body.dark .tab-btn.member.active,
+    body.dark .preview-badge.member,
+    body.dark .inline-member-tag {
+      color: #fff;
+      border-color: transparent;
+    }
+    body.dark .member-pill.m0, body.dark .calendar-filter.member.active.m0, body.dark .preview-badge.member.m0, body.dark .inline-member-tag.m0 { background: var(--member-0); }
+    body.dark .member-pill.m1, body.dark .calendar-filter.member.active.m1, body.dark .preview-badge.member.m1, body.dark .inline-member-tag.m1 { background: var(--member-1); }
+    body.dark .member-pill.m2, body.dark .calendar-filter.member.active.m2, body.dark .preview-badge.member.m2, body.dark .inline-member-tag.m2 { background: var(--member-2); }
+    body.dark .member-pill::before, body.dark .tab-btn.member.active::before { background: rgba(255,255,255,0.9); }
+
+    .summary-copy {
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--text-soft);
+      max-width: 75ch;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .action-row .select.inline {
+      min-width: 148px;
+      min-height: 40px;
+      padding: 8px 10px;
+      background: var(--surface);
+    }
+
+    .action-row .small-btn {
+      min-height: 40px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .secondary-panel {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+      gap: 10px;
+    }
+
+    .secondary-panel.open {
+      display: grid;
+    }
+
+    .secondary-panel .helper {
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--text-faint);
+    }
+
+    .empty {
+      border: 1px dashed var(--border-strong);
+      border-radius: 16px;
+      background: var(--surface-2);
+      padding: 16px;
+      color: var(--text-soft);
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .calendar-top-controls {
+      display: grid;
+      gap: 12px;
+    }
+
+    .calendar-filter-row {
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .calendar-filter.member.active {
+      position: relative;
+      padding-left: 26px;
+    }
+
+    .calendar-filter.member.active::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      transform: translateY(-50%);
+    }
+
+    .calendar-grid-wrap {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .weekday-row {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+      min-height: 20px;
+    }
+
+    .weekday {
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--text-faint);
+      font-weight: 700;
+      padding: 0 6px;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+      align-content: start;
+    }
+
+    .day-cell {
+      min-height: 96px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      padding: 8px;
+      display: grid;
+      align-content: start;
+      gap: 6px;
+      text-align: left;
+      position: relative;
+    }
+
+    .day-cell:hover { border-color: var(--border-strong); background: var(--surface-3); }
+    .day-cell.outside { opacity: 0.66; }
+    .day-cell.today { box-shadow: inset 0 0 0 1px var(--focus); }
+    .day-cell.drag-target { box-shadow: inset 0 0 0 2px var(--focus); }
+
+    .day-number {
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .day-summary {
+      font-size: 11px;
+      line-height: 14px;
+      color: var(--text-faint);
+      min-height: 14px;
+    }
+
+    .calendar-chip {
+      min-height: 20px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 0 8px;
+      background: var(--surface);
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      line-height: 14px;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+
+    .calendar-chip.m0 { background: var(--member-0-soft); }
+    .calendar-chip.m1 { background: var(--member-1-soft); }
+    .calendar-chip.m2 { background: var(--member-2-soft); }
+    .calendar-chip.done { opacity: 0.88; }
+
+    body.dark .calendar-chip.m0,
+    body.dark .calendar-chip.m1,
+    body.dark .calendar-chip.m2 {
+      color: #fff;
+      border-color: transparent;
+    }
+    body.dark .calendar-chip.m0 { background: var(--member-0); }
+    body.dark .calendar-chip.m1 { background: var(--member-1); }
+    body.dark .calendar-chip.m2 { background: var(--member-2); }
+
+    .overflow-note {
+      font-size: 11px;
+      line-height: 14px;
+      color: var(--text-faint);
+      font-weight: 700;
+    }
+
+    .my-tabs .tab-btn {
+      min-height: 40px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      padding: 0 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+      position: relative;
+    }
+
+    .my-tabs .tab-btn.active {
+      color: var(--text);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .my-tabs .tab-btn.member.active {
+      padding-left: 28px;
+    }
+
+    .my-tabs .tab-btn.member.active::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      transform: translateY(-50%);
+    }
+
+    .my-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .my-summary-card {
+      min-height: 72px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface-2);
+      padding: 14px;
+      display: grid;
+      gap: 6px;
+      align-content: center;
+    }
+
+    .my-content {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .my-column-card, .recent-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface-2);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .my-column-card { min-height: 180px; }
+    .recent-card { min-height: 140px; }
+
+    .column-title {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .compact-list {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .compact-item {
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 10px 12px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .compact-item-title {
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .compact-meta {
+      font-size: 11px;
+      line-height: 14px;
+      color: var(--text-faint);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .compact-note {
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--text-soft);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .inline-member-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-soft);
+      padding: 0 8px;
+      font-size: 11px;
+      line-height: 14px;
+      font-weight: 700;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 22, 32, 0.56);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 30;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: min(900px, calc(100vw - 48px));
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .modal.small { width: min(760px, calc(100vw - 48px)); }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .modal-title h3 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 30px;
+      font-weight: 700;
+    }
+
+    .modal-title p {
+      margin: 6px 0 0;
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--text-soft);
+      max-width: 56ch;
+    }
+
+    .close-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    .preview-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .preview-section {
+      display: grid;
+      gap: 12px;
+    }
+
+    .preview-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .preview-cards {
+      display: grid;
+      gap: 12px;
+    }
+
+    .preview-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface-2);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .preview-meta, .preview-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .preview-badge {
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-soft);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .editor-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .editor-grid.two-col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .editor-grid.three-col { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .editor-grid .full { grid-column: 1 / -1; }
+
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .muted-note {
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--text-faint);
+    }
+
+    .stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .drag-hint {
+      font-size: 11px;
+      line-height: 14px;
+      color: var(--text-faint);
+      margin-top: -4px;
+    }
+
+    @media (max-width: 1360px) {
+      .app-shell { width: min(calc(100vw - 32px), var(--container)); }
+      .main-row, .secondary-row { grid-template-columns: 1fr; }
+      .main-row .panel, .secondary-row .panel { min-height: unset; }
+    }
+
+    @media (max-width: 1180px) {
+      .utility-bar,
+      .stats-grid,
+      .family-strip,
+      .task-drawer-grid,
+      .payment-drawer-grid,
+      .editor-grid.two-col,
+      .editor-grid.three-col,
+      .my-summary,
+      .my-content {
+        grid-template-columns: 1fr;
+      }
+      .task-drawer-grid .row-2,
+      .payment-drawer-grid .row-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  
+
+    .actor-select-wrap {
+      min-width: 190px;
+      display: grid;
+      gap: 4px;
+      padding: 8px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      background: var(--surface-2);
+    }
+
+    .actor-select-wrap span {
+      font-size: 11px;
+      line-height: 1.2;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-faint);
+      font-weight: 700;
+    }
+
+    .actor-select {
+      background: transparent;
+      border: 0;
+      padding: 0;
+      min-height: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .activity-panel {
+      display: grid;
+      gap: 14px;
+    }
+
+    .activity-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .activity-item {
+      display: grid;
+      gap: 6px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface-2);
+    }
+
+    .activity-topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .activity-actor {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+    }
+
+    .activity-time {
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    .activity-message {
+      color: var(--text-soft);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .conflict-banner {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 8px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(154, 106, 24, 0.4);
+      background: var(--warning-soft);
+      color: var(--warning);
+    }
+
+    body.dark .conflict-banner {
+      color: #ffd694;
+      border-color: rgba(255, 214, 148, 0.32);
+    }
+
+    .conflict-banner.hidden { display: none; }
+
+    .conflict-banner-title {
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.01em;
+    }
+
+    .conflict-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .conflict-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.5);
+      border: 1px solid rgba(154, 106, 24, 0.18);
+      font-size: 12px;
+      color: inherit;
+    }
+
+    body.dark .conflict-pill {
+      background: rgba(22, 27, 36, 0.35);
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    .calendar-chip.conflict {
+      box-shadow: inset 0 0 0 1px rgba(255, 214, 148, 0.55);
+    }
+
+    .recurrence-note {
+      color: var(--text-faint);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .chip.recurring,
+    .preview-badge.recurring {
+      background: var(--surface-3);
+      border-color: var(--border-strong);
+    }
+
+    .panel-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .compact-btn {
+      min-height: 36px;
+      padding: 0 14px;
+    }
+
+    .activity-summary-strip {
+      display: grid;
+      grid-template-columns: 160px minmax(0, 1fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .activity-summary-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface-2);
+      padding: 12px 14px;
+      display: grid;
+      gap: 6px;
+      align-content: center;
+    }
+
+    .activity-summary-card.latest { min-width: 0; }
+
+    .activity-latest-line {
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .activity-actor {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      min-width: 0;
+    }
+
+    .activity-list.collapsed { max-height: 438px; overflow: auto; }
+    .activity-list.expanded { max-height: 720px; overflow: auto; }
+
+    @media (max-width: 900px) {
+      .app-shell {
+        width: min(calc(100vw - 20px), var(--container));
+        padding: 16px 0 24px;
+        gap: 18px;
+      }
+
+      .utility-bar,
+      .panel,
+      .modal {
+        padding: 16px;
+      }
+
+      .utility-actions {
+        justify-content: flex-start;
+      }
+
+      .utility-actions > * {
+        flex: 1 1 calc(50% - 8px);
+        min-width: 0;
+      }
+
+      .actor-select-wrap {
+        min-width: 0;
+        flex: 1 1 100%;
+      }
+
+      .stats-grid,
+      .family-strip {
+        gap: 12px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .panel-header,
+      .controls-row,
+      .preview-section-head,
+      .modal-header {
+        min-height: auto;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .month-nav {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .controls-row > .primary-btn,
+      .preview-section-head > .primary-btn,
+      .panel-header-actions {
+        width: 100%;
+      }
+
+      .controls-row .pill-group,
+      .controls-row .segment-group,
+      .calendar-filter-row,
+      .my-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .calendar-grid-wrap {
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .weekday-row,
+      .calendar-grid {
+        min-width: 700px;
+      }
+
+      .day-cell {
+        min-height: 84px;
+      }
+
+      .action-row .select.inline,
+      .action-row .small-btn {
+        flex: 1 1 calc(50% - 8px);
+        min-width: 0;
+      }
+
+      .activity-summary-strip {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app-title {
+        font-size: 26px;
+        line-height: 32px;
+      }
+
+      .utility-actions > * {
+        flex-basis: 100%;
+      }
+
+      .stat-value {
+        font-size: 28px;
+        line-height: 32px;
+      }
+
+      .family-card-body,
+      .my-summary-card,
+      .my-column-card,
+      .recent-card,
+      .activity-item {
+        padding: 12px;
+      }
+
+      .day-cell {
+        min-height: 76px;
+        padding: 6px;
+        gap: 4px;
+      }
+
+      .day-summary {
+        display: none;
+      }
+
+      .calendar-chip {
+        min-height: 18px;
+        font-size: 10px;
+        line-height: 12px;
+        padding: 0 6px;
+      }
+
+      .action-row .select.inline,
+      .action-row .small-btn {
+        flex-basis: 100%;
+      }
+
+      .modal,
+      .modal.small {
+        width: min(calc(100vw - 16px), 900px);
+        max-height: calc(100vh - 16px);
+        padding: 14px;
+        border-radius: 18px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="utility-bar">
+      <div>
+        <div class="eyebrow">Shared household planner</div>
+        <h1 class="app-title">Family Group Hub</h1>
+        <p class="app-subtitle">A calmer family operations board for tasks, payments, appointments, and handoffs without the usual household fog of war.</p>
+      </div>
+      <div class="utility-actions">
+        <label class="actor-select-wrap" for="activeActor">
+          <span>Working as</span>
+          <select class="actor-select" id="activeActor"></select>
+        </label>
+        <button class="secondary-btn" id="themeToggle" type="button">Toggle theme</button>
+        <button class="ghost-btn" id="exportBtn" type="button">Export backup</button>
+        <label class="ghost-btn" for="importFile" style="display:inline-flex;align-items:center;justify-content:center;">Import backup</label>
+        <input id="importFile" type="file" accept="application/json" class="sr-only" />
+        <button class="ghost-btn danger" id="resetBtn" type="button">Reset all</button>
+      </div>
+    </header>
+
+    <section class="stats-grid" id="statsGrid"></section>
+    <section class="family-strip" id="familyStrip"></section>
+
+    <section class="workspace-row main-row">
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h2>Tasks</h2>
+            <p>See what needs action first, then open the add drawer only when you need it.</p>
+          </div>
+        </div>
+
+        <div class="controls-row">
+          <div class="pill-group" id="taskFilters"></div>
+          <button class="primary-btn" id="toggleTaskDrawer" type="button">+ Add task</button>
+        </div>
+
+        <form class="drawer" id="taskDrawer">
+          <div class="task-drawer-grid">
+            <div class="field">
+              <label for="taskTitle">Task title</label>
+              <input class="input" id="taskTitle" required placeholder="Pick up prescriptions" />
+            </div>
+            <div class="field">
+              <label for="taskCreatedBy">Created by</label>
+              <select class="select" id="taskCreatedBy"></select>
+            </div>
+            <div class="row-2">
+              <div class="field">
+                <label for="taskDueDate">Due date</label>
+                <input class="input" id="taskDueDate" type="date" />
+              </div>
+              <div class="field">
+                <label for="taskPriority">Priority</label>
+                <select class="select" id="taskPriority">
+                  <option>Low</option>
+                  <option selected>Medium</option>
+                  <option>High</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="taskRecurrence">Repeats</label>
+                <select class="select" id="taskRecurrence">
+                  <option value="none" selected>Does not repeat</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="taskRecurrenceEnd">Repeat until</label>
+                <input class="input" id="taskRecurrenceEnd" type="date" />
+              </div>
+              <div class="field">
+                <label for="taskTag">Tag</label>
+                <input class="input" id="taskTag" placeholder="Health, school, errand" />
+              </div>
+            </div>
+            <div class="row-3 field">
+              <label for="taskDetails">Details</label>
+              <textarea class="textarea" id="taskDetails" placeholder="Add context that prevents confusion later."></textarea>
+            </div>
+            <div class="row-4 field">
+              <button class="primary-btn" type="submit">Add task</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="list-region" id="taskList"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h2>Payments</h2>
+            <p>Track due dates, ownership, and status without making bills the family mystery genre.</p>
+          </div>
+        </div>
+
+        <div class="controls-row">
+          <div class="pill-group" id="paymentFilters"></div>
+          <button class="primary-btn" id="togglePaymentDrawer" type="button">+ Add payment</button>
+        </div>
+
+        <form class="drawer" id="paymentDrawer">
+          <div class="payment-drawer-grid">
+            <div class="field">
+              <label for="paymentTitle">Payment name</label>
+              <input class="input" id="paymentTitle" required placeholder="Electric bill" />
+            </div>
+            <div class="field">
+              <label for="paymentAmount">Amount</label>
+              <input class="input" id="paymentAmount" type="number" min="0" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="field">
+              <label for="paymentDueDate">Due date</label>
+              <input class="input" id="paymentDueDate" type="date" />
+            </div>
+            <div class="row-2">
+              <div class="field">
+                <label for="paymentAssigned">Handled by</label>
+                <select class="select" id="paymentAssigned"></select>
+              </div>
+              <div class="field">
+                <label for="paymentStatus">Status</label>
+                <select class="select" id="paymentStatus">
+                  <option>Unpaid</option>
+                  <option>Partial</option>
+                  <option>Paid</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="paymentCategory">Category</label>
+                <input class="input" id="paymentCategory" placeholder="Utilities, school, medical" />
+              </div>
+            </div>
+            <div class="row-3 field">
+              <label for="paymentNote">Note</label>
+              <textarea class="textarea" id="paymentNote" placeholder="Optional note"></textarea>
+            </div>
+            <div class="row-4 field">
+              <button class="primary-btn" type="submit">Add payment</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="list-region" id="paymentList"></div>
+      </section>
+    </section>
+
+    <section class="workspace-row secondary-row">
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h2>Calendar</h2>
+            <p>Use this like a real planning surface: glance, preview, drag to move, then edit only when needed.</p>
+          </div>
+          <div class="month-nav">
+            <button class="ghost-btn" id="prevMonth" type="button">◀</button>
+            <div class="month-label" id="monthLabel"></div>
+            <button class="ghost-btn" id="nextMonth" type="button">▶</button>
+          </div>
+        </div>
+
+        <div class="calendar-top-controls">
+          <div class="segment-group" id="calendarModeTabs"></div>
+          <div class="calendar-filter-row" id="calendarFamilyFilters"></div>
+          <div class="drag-hint">Drag a task or appointment chip to another day to move it.</div>
+        </div>
+
+        <div class="calendar-grid-wrap">
+          <div class="weekday-row" id="weekdayRow"></div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <h2>My Tab</h2>
+            <p>Personal accountability without making the app feel like a guilt aquarium.</p>
+          </div>
+        </div>
+
+        <div class="my-tabs member-tab-row" id="myTabs"></div>
+        <div class="my-summary" id="mySummary"></div>
+        <div class="my-content" id="myContent"></div>
+        <div class="recent-card" id="myRecent"></div>
+      </section>
+    </section>
+
+    <section class="panel activity-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <h2>Activity log</h2>
+          <p>See who moved, edited, or completed what so the household memory isn’t held together by vibes.</p>
+        </div>
+        <div class="panel-header-actions">
+          <button class="ghost-btn compact-btn" id="toggleActivityLog" type="button">Expand log</button>
+        </div>
+      </div>
+      <div id="activityLog"></div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="dayPreviewBackdrop"></div>
+  <div class="modal-backdrop" id="editorBackdrop"></div>
+
+  <script>
+    const STORAGE_KEY = 'familyGroupHub_v8';
+    const LEGACY_KEYS = ['familyGroupHub_v7', 'familyGroupHub_v6', 'familyGroupHub_v5', 'familyGroupHub_v4', 'familyGroupHub_v3', 'familyGroupHub_v2', 'familyGroupHub_v1'];
+    const EVENT_TYPES = ['Doctor appointment', 'School', 'Family event', 'Errand', 'Other'];
+    const RECURRENCE_OPTIONS = [['none', 'Does not repeat'], ['daily', 'Daily'], ['weekly', 'Weekly'], ['monthly', 'Monthly']];
+
+    const defaultState = {
+      theme: 'light',
+      taskFilter: 'All',
+      paymentFilter: 'All',
+      calendarMode: 'all',
+      calendarFamilyFilter: 'all',
+      calendarMonth: currentMonthKey(),
+      myMemberView: 0,
+      activeActor: 0,
+      members: ['Family Member 1', 'Family Member 2', 'Family Member 3'],
+      tasks: [],
+      payments: [],
+      events: [],
+      activity: [],
+      activityExpanded: false
+    };
+
+    let state = normalizeState(loadState());
+    const ui = {
+      showTaskDrawer: false,
+      showPaymentDrawer: false,
+      dayPreviewDate: '',
+      editor: null,
+      draggedItem: null,
+      suppressDayOpenUntil: 0
+    };
+
+    const els = {
+      statsGrid: document.getElementById('statsGrid'),
+      familyStrip: document.getElementById('familyStrip'),
+      taskFilters: document.getElementById('taskFilters'),
+      taskDrawer: document.getElementById('taskDrawer'),
+      toggleTaskDrawer: document.getElementById('toggleTaskDrawer'),
+      taskList: document.getElementById('taskList'),
+      paymentFilters: document.getElementById('paymentFilters'),
+      paymentDrawer: document.getElementById('paymentDrawer'),
+      togglePaymentDrawer: document.getElementById('togglePaymentDrawer'),
+      paymentList: document.getElementById('paymentList'),
+      monthLabel: document.getElementById('monthLabel'),
+      calendarModeTabs: document.getElementById('calendarModeTabs'),
+      calendarFamilyFilters: document.getElementById('calendarFamilyFilters'),
+      weekdayRow: document.getElementById('weekdayRow'),
+      calendarGrid: document.getElementById('calendarGrid'),
+      myTabs: document.getElementById('myTabs'),
+      mySummary: document.getElementById('mySummary'),
+      myContent: document.getElementById('myContent'),
+      myRecent: document.getElementById('myRecent'),
+      activityLog: document.getElementById('activityLog'),
+      dayPreviewBackdrop: document.getElementById('dayPreviewBackdrop'),
+      editorBackdrop: document.getElementById('editorBackdrop'),
+      importFile: document.getElementById('importFile'),
+      activeActor: document.getElementById('activeActor'),
+      themeToggle: document.getElementById('themeToggle'),
+      exportBtn: document.getElementById('exportBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      prevMonth: document.getElementById('prevMonth'),
+      nextMonth: document.getElementById('nextMonth'),
+      taskTitle: document.getElementById('taskTitle'),
+      taskCreatedBy: document.getElementById('taskCreatedBy'),
+      taskDueDate: document.getElementById('taskDueDate'),
+      taskPriority: document.getElementById('taskPriority'),
+      taskRecurrence: document.getElementById('taskRecurrence'),
+      taskRecurrenceEnd: document.getElementById('taskRecurrenceEnd'),
+      taskTag: document.getElementById('taskTag'),
+      taskDetails: document.getElementById('taskDetails'),
+      paymentTitle: document.getElementById('paymentTitle'),
+      paymentAmount: document.getElementById('paymentAmount'),
+      paymentDueDate: document.getElementById('paymentDueDate'),
+      paymentAssigned: document.getElementById('paymentAssigned'),
+      paymentStatus: document.getElementById('paymentStatus'),
+      paymentCategory: document.getElementById('paymentCategory'),
+      paymentNote: document.getElementById('paymentNote')
+    };
+
+    init();
+
+    function init() {
+      applyTheme();
+      wireStaticEvents();
+      render();
+    }
+
+    function wireStaticEvents() {
+      els.toggleTaskDrawer.addEventListener('click', () => {
+        ui.showTaskDrawer = !ui.showTaskDrawer;
+        if (ui.showTaskDrawer) ui.showPaymentDrawer = false;
+        render();
+      });
+
+      els.togglePaymentDrawer.addEventListener('click', () => {
+        ui.showPaymentDrawer = !ui.showPaymentDrawer;
+        if (ui.showPaymentDrawer) ui.showTaskDrawer = false;
+        render();
+      });
+
+      els.taskDrawer.addEventListener('submit', addTask);
+      els.paymentDrawer.addEventListener('submit', addPayment);
+      els.activeActor.addEventListener('change', () => {
+        state.activeActor = clampMemberIndex(Number(els.activeActor.value || 0));
+        persistAndRender();
+      });
+      els.themeToggle.addEventListener('click', toggleTheme);
+      els.exportBtn.addEventListener('click', exportBackup);
+      els.resetBtn.addEventListener('click', resetAll);
+      els.importFile.addEventListener('change', importBackup);
+      els.toggleActivityLog?.addEventListener('click', () => {
+        state.activityExpanded = !state.activityExpanded;
+        persistAndRender();
+      });
+      els.prevMonth.addEventListener('click', () => shiftCalendar(-1));
+      els.nextMonth.addEventListener('click', () => shiftCalendar(1));
+
+      document.body.addEventListener('click', handleBodyClick);
+      document.body.addEventListener('change', handleBodyChange);
+      document.addEventListener('keydown', handleGlobalKeydown);
+      els.editorBackdrop.addEventListener('input', refreshEventConflictBanner);
+      els.editorBackdrop.addEventListener('change', refreshEventConflictBanner);
+      els.dayPreviewBackdrop.addEventListener('click', e => { if (e.target === els.dayPreviewBackdrop) closeDayPreview(); });
+      els.editorBackdrop.addEventListener('click', e => { if (e.target === els.editorBackdrop) closeEditor(); });
+    }
+
+    function handleGlobalKeydown(event) {
+      if (event.key !== 'Escape') return;
+      if (ui.editor) return closeEditor();
+      if (ui.dayPreviewDate) return closeDayPreview();
+    }
+
+    function handleBodyClick(event) {
+      const t = event.target;
+
+      if (t.closest('[data-close-preview]')) return closeDayPreview();
+      if (t.closest('[data-close-editor]')) return closeEditor();
+      if (t.closest('[data-open-task-editor]')) {
+        const id = t.closest('[data-open-task-editor]').dataset.openTaskEditor;
+        const date = t.closest('[data-open-task-editor]').dataset.date || '';
+        return openTaskEditor(id || '', date || '');
+      }
+      if (t.closest('[data-open-payment-editor]')) {
+        const id = t.closest('[data-open-payment-editor]').dataset.openPaymentEditor;
+        return openPaymentEditor(id || '');
+      }
+      if (t.closest('[data-open-event-editor]')) {
+        const id = t.closest('[data-open-event-editor]').dataset.openEventEditor;
+        const date = t.closest('[data-open-event-editor]').dataset.date || '';
+        return openEventEditor(id || '', date || '');
+      }
+      if (t.closest('[data-open-add-task-for-day]')) {
+        const date = t.closest('[data-open-add-task-for-day]').dataset.openAddTaskForDay;
+        return openTaskEditor('', date || '');
+      }
+      if (t.closest('[data-open-add-event-for-day]')) {
+        const date = t.closest('[data-open-add-event-for-day]').dataset.openAddEventForDay;
+        return openEventEditor('', date || '');
+      }
+      if (t.closest('[data-save-editor]')) {
+        const kind = t.closest('[data-save-editor]').dataset.saveEditor;
+        if (kind === 'task') return saveTaskFromEditor();
+        if (kind === 'payment') return savePaymentFromEditor();
+        if (kind === 'event') return saveEventFromEditor();
+      }
+      if (t.closest('[data-delete-editor]')) {
+        const kind = t.closest('[data-delete-editor]').dataset.deleteEditor;
+        if (kind === 'task') return deleteTask(ui.editor?.id);
+        if (kind === 'payment') return deletePayment(ui.editor?.id);
+        if (kind === 'event') return deleteEvent(ui.editor?.id);
+      }
+
+      if (t.closest('[data-task-filter]')) {
+        state.taskFilter = t.closest('[data-task-filter]').dataset.taskFilter;
+        return persistAndRender();
+      }
+      if (t.closest('[data-payment-filter]')) {
+        state.paymentFilter = t.closest('[data-payment-filter]').dataset.paymentFilter;
+        return persistAndRender();
+      }
+      if (t.closest('[data-calendar-mode]')) {
+        state.calendarMode = t.closest('[data-calendar-mode]').dataset.calendarMode;
+        return persistAndRender();
+      }
+      if (t.closest('[data-member-filter]')) {
+        state.calendarFamilyFilter = t.closest('[data-member-filter]').dataset.memberFilter;
+        return persistAndRender();
+      }
+      if (t.closest('[data-my-member]')) {
+        state.myMemberView = Number(t.closest('[data-my-member]').dataset.myMember);
+        return persistAndRender();
+      }
+
+      if (t.closest('[data-day-open]')) {
+        if (Date.now() < ui.suppressDayOpenUntil) return;
+        const button = t.closest('[data-day-open]');
+        return openDayPreview(button.dataset.dayOpen);
+      }
+
+      if (t.closest('[data-task-claim]')) {
+        const id = t.closest('[data-task-claim]').dataset.taskClaim;
+        const select = findTaskOwnerSelect(id);
+        return claimTask(id, select?.value || '');
+      }
+      if (t.closest('[data-task-done]')) {
+        const btn = t.closest('[data-task-done]');
+        return markTaskDone(btn.dataset.taskDone, btn.dataset.occurrenceDate || '');
+      }
+      if (t.closest('[data-task-reopen]')) {
+        const btn = t.closest('[data-task-reopen]');
+        return reopenTask(btn.dataset.taskReopen, btn.dataset.occurrenceDate || '');
+      }
+      if (t.closest('[data-toggle-task-more]')) return toggleSecondary(`task-more-${t.closest('[data-toggle-task-more]').dataset.toggleTaskMore}`);
+      if (t.closest('[data-save-task-note]')) return saveTaskNote(t.closest('[data-save-task-note]').dataset.saveTaskNote);
+      if (t.closest('[data-delete-task]')) return deleteTask(t.closest('[data-delete-task]').dataset.deleteTask);
+
+      if (t.closest('[data-payment-toggle-paid]')) return togglePaymentQuickStatus(t.closest('[data-payment-toggle-paid]').dataset.paymentTogglePaid);
+      if (t.closest('[data-toggle-payment-more]')) return toggleSecondary(`payment-more-${t.closest('[data-toggle-payment-more]').dataset.togglePaymentMore}`);
+      if (t.closest('[data-save-payment-inline]')) return savePaymentInline(t.closest('[data-save-payment-inline]').dataset.savePaymentInline);
+      if (t.closest('[data-delete-payment]')) return deletePayment(t.closest('[data-delete-payment]').dataset.deletePayment);
+    }
+
+    function handleBodyChange(event) {
+      const t = event.target;
+      if (t.matches('.family-name-input')) {
+        const index = Number(t.dataset.memberIndex);
+        renameMember(index, t.value.trim());
+      }
+    }
+
+    function render() {
+      populateMemberSelects();
+      renderStats();
+      renderFamilyStrip();
+      renderTaskFilters();
+      renderTasks();
+      renderPaymentFilters();
+      renderPayments();
+      renderCalendarControls();
+      renderCalendar();
+      renderMyTab();
+      renderActivityLog();
+      renderDayPreview();
+      renderEditor();
+      els.taskDrawer.classList.toggle('open', ui.showTaskDrawer);
+      els.paymentDrawer.classList.toggle('open', ui.showPaymentDrawer);
+      els.toggleTaskDrawer.textContent = ui.showTaskDrawer ? 'Close task drawer' : '+ Add task';
+      els.togglePaymentDrawer.textContent = ui.showPaymentDrawer ? 'Close payment drawer' : '+ Add payment';
+      els.themeToggle.textContent = state.theme === 'dark' ? 'Use light mode' : 'Use dark mode';
+      if (els.toggleActivityLog) els.toggleActivityLog.textContent = state.activityExpanded ? 'Collapse log' : 'Expand log';
+      els.activeActor.value = String(clampMemberIndex(state.activeActor));
+    }
+
+    function renderStats() {
+      const today = todayISO();
+      const openTasks = state.tasks.filter(task => task.status === 'Open').length;
+      const claimedTasks = state.tasks.filter(task => task.status === 'Claimed').length;
+      const dueToday = state.tasks.filter(task => taskOccursOnDate(task, today) && !isTaskOccurrenceDone(task, today) && task.status !== 'Done').length;
+      const unpaid = state.payments.filter(p => p.status === 'Unpaid');
+      const partial = state.payments.filter(p => p.status === 'Partial');
+      const paid = state.payments.filter(p => p.status === 'Paid');
+      const items = [
+        { label: 'Open tasks', value: openTasks },
+        { label: 'Claimed tasks', value: claimedTasks },
+        { label: 'Due today', value: dueToday, emphasis: true },
+        { label: 'Unpaid total', value: money(sumAmounts(unpaid)), emphasis: true },
+        { label: 'Partial total', value: money(sumAmounts(partial)) },
+        { label: 'Paid total', value: money(sumAmounts(paid)) }
+      ];
+      els.statsGrid.innerHTML = items.map(item => `
+        <article class="stat-card ${item.emphasis ? 'emphasis' : ''}">
+          <div class="stat-label">${escapeHtml(item.label)}</div>
+          <div class="stat-value">${escapeHtml(String(item.value))}</div>
+          <div class="stat-sub">${item.label === 'Due today' ? 'Occurrences landing today, including repeats.' : item.label === 'Unpaid total' ? 'Money still hanging in the air.' : '&nbsp;'}</div>
+        </article>
+      `).join('');
+    }
+
+    function renderFamilyStrip() {
+      const weekEnd = addDays(todayISO(), 7);
+      els.familyStrip.innerHTML = state.members.map((member, index) => {
+        const activeTasks = state.tasks.filter(task => task.assignedTo === member && task.status !== 'Done').length;
+        const completed = state.tasks.filter(task => task.completedBy === member).length;
+        const owed = state.payments.filter(payment => payment.assignedTo === member && payment.status !== 'Paid');
+        const dueSoon = state.tasks.filter(task => task.assignedTo === member && task.status !== 'Done').filter(task => {
+          const nextDue = nextTaskOccurrence(task, todayISO());
+          return nextDue && nextDue >= todayISO() && nextDue <= weekEnd;
+        }).length;
+        return `
+          <article class="family-card m${index}">
+            <div class="family-accent"></div>
+            <div class="family-card-body m${index}">
+              <div class="family-top">
+                <div class="family-name-wrap">
+                  <span class="member-dot" aria-hidden="true"></span>
+                  <input class="family-name-input" data-member-index="${index}" value="${escapeAttr(member)}" aria-label="Family member ${index + 1} name" />
+                </div>
+                <span class="status-chip">${dueSoon} due this week</span>
+              </div>
+              <div class="family-stats">
+                <div class="mini-stat"><div class="mini-stat-label">Active tasks</div><div class="mini-stat-value">${activeTasks}</div></div>
+                <div class="mini-stat"><div class="mini-stat-label">Completed</div><div class="mini-stat-value">${completed}</div></div>
+                <div class="mini-stat"><div class="mini-stat-label">Owed</div><div class="mini-stat-value">${escapeHtml(money(sumAmounts(owed)))}</div></div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderTaskFilters() {
+      const filters = ['All', 'Open', 'Claimed', 'Done'];
+      els.taskFilters.innerHTML = filters.map(label => `
+        <button class="pill-btn ${state.taskFilter === label ? 'active' : ''}" type="button" data-task-filter="${label}">${label}</button>
+      `).join('');
+    }
+
+    function renderTasks() {
+      const tasks = filteredTasks().sort(taskSort);
+      if (!tasks.length) {
+        els.taskList.innerHTML = `<div class="empty">No tasks in this view yet. That either means the house is under control or nobody has fed the machine.</div>`;
+        return;
+      }
+      els.taskList.innerHTML = tasks.map(taskCard).join('');
+    }
+
+    function renderPaymentFilters() {
+      const filters = ['All', 'Unpaid', 'Partial', 'Paid'];
+      els.paymentFilters.innerHTML = filters.map(label => `
+        <button class="pill-btn ${state.paymentFilter === label ? 'active' : ''}" type="button" data-payment-filter="${label}">${label}</button>
+      `).join('');
+    }
+
+    function renderPayments() {
+      const payments = filteredPayments().sort(paymentSort);
+      if (!payments.length) {
+        els.paymentList.innerHTML = `<div class="empty">No payments in this view yet. Add one before due dates start doing their tiny villain monologue.</div>`;
+        return;
+      }
+      els.paymentList.innerHTML = payments.map(paymentCard).join('');
+    }
+
+    function renderCalendarControls() {
+      els.monthLabel.textContent = formatMonthLabel(state.calendarMonth);
+      const modes = [
+        ['tasks', 'Tasks'],
+        ['events', 'Appointments & events'],
+        ['all', 'All']
+      ];
+      els.calendarModeTabs.innerHTML = modes.map(([key, label]) => `
+        <button class="seg-btn ${state.calendarMode === key ? 'active' : ''}" type="button" data-calendar-mode="${key}">${label}</button>
+      `).join('');
+      const filters = ['all', '0', '1', '2'];
+      els.calendarFamilyFilters.innerHTML = filters.map(filter => {
+        if (filter === 'all') {
+          return `<button class="pill-btn calendar-filter ${state.calendarFamilyFilter === 'all' ? 'active' : ''}" type="button" data-member-filter="all">All family</button>`;
+        }
+        const index = Number(filter);
+        return `<button class="pill-btn calendar-filter member m${index} ${state.calendarFamilyFilter === filter ? 'active' : ''}" type="button" data-member-filter="${filter}">${escapeHtml(state.members[index])}</button>`;
+      }).join('');
+      els.weekdayRow.innerHTML = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => `<div class="weekday">${day}</div>`).join('');
+    }
+
+    function renderCalendar() {
+      const { year, monthIndex } = monthParts(state.calendarMonth);
+      const first = new Date(year, monthIndex, 1);
+      const startOffset = first.getDay();
+      const gridStart = new Date(year, monthIndex, 1 - startOffset);
+      const today = todayISO();
+      const cells = [];
+      for (let i = 0; i < 42; i += 1) {
+        const date = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+        const iso = localISO(date);
+        const inMonth = date.getMonth() === monthIndex;
+        const items = getCalendarItemsForDate(iso);
+        const firstChip = items[0] ? calendarChip(items[0]) : '';
+        const moreCount = items.length > 1 ? `<div class="overflow-note">+${items.length - 1} more</div>` : '';
+        const summary = items.length ? `${items.length} item${items.length === 1 ? '' : 's'}` : 'No items';
+        const title = items.length ? items.slice(0, 5).map(item => item.kind === 'event'
+          ? `${item.time ? formatTime(item.time) + ' - ' : ''}${item.title}`
+          : `${item.title}${item.status === 'Done' ? ' (done)' : ''}`
+        ).join('\n') : 'No items';
+        cells.push(`
+          <button class="day-cell ${inMonth ? '' : 'outside'} ${iso === today ? 'today' : ''}" type="button" data-day-open="${iso}" data-day-cell="${iso}" title="${escapeAttr(title)}">
+            <div class="day-number">${date.getDate()}</div>
+            <div class="day-summary">${escapeHtml(summary)}</div>
+            ${firstChip}
+            ${moreCount}
+          </button>
+        `);
+      }
+      els.calendarGrid.innerHTML = cells.join('');
+      bindCalendarDnD();
+    }
+
+    function renderMyTab() {
+      els.myTabs.innerHTML = state.members.map((member, index) => `
+        <button class="tab-btn member m${index} ${state.myMemberView === index ? 'active' : ''}" type="button" data-my-member="${index}">${escapeHtml(member)}</button>
+      `).join('');
+      const member = state.members[state.myMemberView];
+      const activeTasks = state.tasks.filter(task => task.assignedTo === member && task.status !== 'Done').sort(taskSort);
+      const owedPayments = state.payments.filter(payment => payment.assignedTo === member && payment.status !== 'Paid').sort(paymentSort);
+      const paidItems = state.payments.filter(payment => payment.assignedTo === member && payment.status === 'Paid').length;
+      const completed = state.tasks.filter(task => task.completedBy === member).sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || '')).slice(0, 4);
+
+      els.mySummary.innerHTML = `
+        <div class="my-summary-card"><div class="mini-stat-label">Picked up</div><div class="mini-stat-value">${activeTasks.length}</div></div>
+        <div class="my-summary-card"><div class="mini-stat-label">Still owed</div><div class="mini-stat-value">${escapeHtml(money(sumAmounts(owedPayments)))}</div></div>
+        <div class="my-summary-card"><div class="mini-stat-label">Paid items</div><div class="mini-stat-value">${paidItems}</div></div>
+      `;
+
+      els.myContent.innerHTML = `
+        <div class="my-column-card">
+          <h3 class="column-title">Tasks picked up</h3>
+          <div class="compact-list">${activeTasks.length ? activeTasks.slice(0, 5).map(task => compactTask(task)).join('') : `<div class="empty">No active tasks here. Rare and suspicious.</div>`}</div>
+        </div>
+        <div class="my-column-card">
+          <h3 class="column-title">Payments assigned</h3>
+          <div class="compact-list">${owedPayments.length ? owedPayments.slice(0, 5).map(payment => compactPayment(payment)).join('') : `<div class="empty">No unpaid items assigned right now.</div>`}</div>
+        </div>
+      `;
+
+      els.myRecent.innerHTML = `
+        <div class="column-title">Recently completed</div>
+        <div class="compact-list">${completed.length ? completed.map(task => `
+          <div class="compact-item">
+            <div class="compact-item-title"><span>${escapeHtml(task.title)}</span><span>${task.completedAt ? escapeHtml(formatDate(task.completedAt.slice(0,10))) : ''}</span></div>
+            <div class="compact-meta"><span class="inline-member-tag m${state.myMemberView}">${escapeHtml(member)}</span>${task.tag ? `<span>${escapeHtml(task.tag)}</span>` : ''}</div>
+          </div>
+        `).join('') : `<div class="empty">Nothing completed yet for this member. The glory log is blank.</div>`}</div>
+      `;
+    }
+
+    function renderDayPreview() {
+      if (!ui.dayPreviewDate) {
+        els.dayPreviewBackdrop.classList.remove('open');
+        els.dayPreviewBackdrop.innerHTML = '';
+        return;
+      }
+      const date = ui.dayPreviewDate;
+      const tasks = state.tasks.filter(task => taskOccursOnDate(task, date)).map(task => ({ ...task, occurrenceDate: date })).sort(taskSort);
+      const events = state.events.filter(item => eventOccursOnDate(item, date)).map(item => ({ ...item, occurrenceDate: date })).sort(eventSort);
+      const conflictGroups = getDateConflictGroups(date);
+      els.dayPreviewBackdrop.classList.add('open');
+      els.dayPreviewBackdrop.innerHTML = `
+        <div class="modal">
+          <div class="modal-header">
+            <div class="modal-title">
+              <h3>${escapeHtml(formatDate(date))}</h3>
+              <p>Preview the full day first, then open the editor only when you actually need to change something.</p>
+            </div>
+            <button class="close-btn" type="button" data-close-preview aria-label="Close">×</button>
+          </div>
+          ${conflictGroups.length ? `<div class="conflict-banner"><div class="conflict-banner-title">Appointment conflict warning</div><div class="conflict-list">${conflictGroups.map(group => `<span class="conflict-pill">${escapeHtml(group)}</span>`).join('')}</div></div>` : ''}
+          <div class="preview-grid">
+            <section class="preview-section">
+              <div class="preview-section-head">
+                <div>
+                  <div class="column-title">Tasks</div>
+                  <div class="muted-note">${tasks.length} task${tasks.length === 1 ? '' : 's'} on this day</div>
+                </div>
+                <button class="primary-btn" type="button" data-open-add-task-for-day="${date}">Add task</button>
+              </div>
+              <div class="preview-cards">
+                ${tasks.length ? tasks.map(task => previewTaskCard(task)).join('') : `<div class="empty">No tasks on this day. A brief oasis.</div>`}
+              </div>
+            </section>
+            <section class="preview-section">
+              <div class="preview-section-head">
+                <div>
+                  <div class="column-title">Appointments & events</div>
+                  <div class="muted-note">${events.length} scheduled item${events.length === 1 ? '' : 's'} on this day</div>
+                </div>
+                <button class="primary-btn" type="button" data-open-add-event-for-day="${date}">Add appointment/event</button>
+              </div>
+              <div class="preview-cards">
+                ${events.length ? events.map(item => previewEventCard(item)).join('') : `<div class="empty">No appointments or events on this day yet.</div>`}
+              </div>
+            </section>
+          </div>
+        </div>
+      `;
+    }
+
+    function findTaskOwnerSelect(id) {
+      return [...document.querySelectorAll('[data-task-owner-select]')].find(select => select.dataset.taskOwnerSelect === id) || null;
+    }
+
+    function renderEditor() {
+      if (!ui.editor) {
+        els.editorBackdrop.classList.remove('open');
+        els.editorBackdrop.innerHTML = '';
+        return;
+      }
+      const { kind, id, date } = ui.editor;
+      els.editorBackdrop.classList.add('open');
+      if (kind === 'task') {
+        const task = id ? state.tasks.find(item => item.id === id) : null;
+        const taskDate = date || task?.dueDate || todayISO();
+        els.editorBackdrop.innerHTML = taskEditorMarkup(task, taskDate);
+        return;
+      }
+      if (kind === 'payment') {
+        const payment = id ? state.payments.find(item => item.id === id) : null;
+        els.editorBackdrop.innerHTML = paymentEditorMarkup(payment);
+        return;
+      }
+      if (kind === 'event') {
+        const item = id ? state.events.find(entry => entry.id === id) : null;
+        const eventDate = date || item?.date || todayISO();
+        els.editorBackdrop.innerHTML = eventEditorMarkup(item, eventDate);
+        refreshEventConflictBanner();
+      }
+    }
+
+    function taskCard(task) {
+      const owner = task.assignedTo || '';
+      const ownerClass = owner ? `m${state.members.indexOf(owner)}` : '';
+      const recurring = task.recurrence !== 'none';
+      const nextDue = recurring ? oldestOutstandingTaskOccurrence(task) : task.dueDate;
+      const overdue = nextDue && task.status !== 'Done' && nextDue < todayISO();
+      const preview = task.note || task.details || (task.tag ? `Tag: ${task.tag}` : 'No extra note yet.');
+      const lastCompletedDate = lastCompletedOccurrence(task);
+      return `
+        <article class="list-card">
+          <div class="card-head">
+            <div>
+              <h3 class="card-title">${escapeHtml(task.title)}</h3>
+              <div class="card-side">Created by ${escapeHtml(task.createdBy)}</div>
+            </div>
+            <div class="card-side">${recurring ? (nextDue ? `Next ${escapeHtml(formatDate(nextDue))}` : 'Repeating series') : (task.dueDate ? `Due ${escapeHtml(formatDate(task.dueDate))}` : 'No due date')}</div>
+          </div>
+          <div class="chip-row">
+            <span class="chip status-${task.status.toLowerCase()}">${escapeHtml(task.status)}</span>
+            ${owner ? `<span class="chip member-pill ${ownerClass}">${escapeHtml(owner)}</span>` : `<span class="chip">Unassigned</span>`}
+            <span class="chip">${escapeHtml(task.priority)}</span>
+            ${task.tag ? `<span class="chip">${escapeHtml(task.tag)}</span>` : ''}
+            ${recurring ? `<span class="chip recurring">${escapeHtml(recurrenceLabel(task.recurrence))}</span>` : ''}
+            ${overdue ? `<span class="chip overdue">Overdue</span>` : ''}
+          </div>
+          <div class="summary-copy">${escapeHtml(preview)}</div>
+          ${recurring ? `<div class="recurrence-note">Repeats ${escapeHtml(recurrenceLabel(task.recurrence).toLowerCase())}${task.recurrenceEnd ? ` until ${escapeHtml(formatDate(task.recurrenceEnd))}` : ''}. ${nextDue ? `Next uncompleted date: ${escapeHtml(formatDate(nextDue))}.` : 'All visible upcoming dates are complete.'}</div>` : ''}
+          <div class="action-row">
+            <select class="select inline" data-task-owner-select="${task.id}">
+              <option value="">Unassigned</option>
+              ${memberOptions(owner)}
+            </select>
+            <button class="small-btn" type="button" data-task-claim="${task.id}">${owner ? 'Reassign' : 'Claim'}</button>
+            ${recurring
+              ? `${nextDue ? `<button class="small-btn" type="button" data-task-done="${task.id}" data-occurrence-date="${nextDue}">Complete next</button>` : ''}${lastCompletedDate ? `<button class="small-btn" type="button" data-task-reopen="${task.id}" data-occurrence-date="${lastCompletedDate}">Undo last</button>` : ''}`
+              : (task.status === 'Done'
+                ? `<button class="small-btn" type="button" data-task-reopen="${task.id}" data-occurrence-date="${task.dueDate || ''}">Reopen</button>`
+                : `<button class="small-btn" type="button" data-task-done="${task.id}" data-occurrence-date="${task.dueDate || ''}">Mark done</button>`)}
+            <button class="small-btn" type="button" data-open-task-editor="${task.id}" data-date="${task.dueDate || ''}">Edit</button>
+            <button class="small-btn" type="button" data-toggle-task-more="${task.id}">More</button>
+          </div>
+          <div class="secondary-panel" id="task-more-${task.id}">
+            <div class="helper">Tag: ${task.tag ? escapeHtml(task.tag) : 'None'}${task.completedBy ? ` • Last completion by ${escapeHtml(task.completedBy)}` : ''}</div>
+            <textarea class="textarea" id="task-note-${task.id}" placeholder="Leave a note for the group.">${escapeHtml(task.note || '')}</textarea>
+            <div class="action-row">
+              <button class="small-btn" type="button" data-save-task-note="${task.id}">Save note</button>
+              <button class="small-btn" type="button" data-delete-task="${task.id}">Delete</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function paymentCard(payment) {
+      const ownerClass = `m${state.members.indexOf(payment.assignedTo)}`;
+      const overdue = payment.dueDate && payment.status !== 'Paid' && payment.dueDate < todayISO();
+      return `
+        <article class="list-card">
+          <div class="card-head">
+            <div>
+              <h3 class="card-title">${escapeHtml(payment.title)}</h3>
+              <div class="card-side">${escapeHtml(money(payment.amount))}</div>
+            </div>
+            <div class="chip status-${payment.status.toLowerCase()}">${escapeHtml(payment.status)}</div>
+          </div>
+          <div class="chip-row">
+            <span class="chip ${overdue ? 'overdue' : ''}">${payment.dueDate ? `Due ${escapeHtml(formatDate(payment.dueDate))}` : 'No due date'}</span>
+            <span class="chip member-pill ${ownerClass}">${escapeHtml(payment.assignedTo)}</span>
+            ${payment.category ? `<span class="chip">${escapeHtml(payment.category)}</span>` : ''}
+          </div>
+          <div class="summary-copy">${escapeHtml(payment.note || 'No note yet. Bills are boring, but the note box still works.')}</div>
+          <div class="action-row">
+            <button class="small-btn" type="button" data-payment-toggle-paid="${payment.id}">${payment.status === 'Paid' ? 'Mark unpaid' : 'Mark paid'}</button>
+            <button class="small-btn" type="button" data-open-payment-editor="${payment.id}">Edit</button>
+            <button class="small-btn" type="button" data-toggle-payment-more="${payment.id}">More</button>
+          </div>
+          <div class="secondary-panel" id="payment-more-${payment.id}">
+            <div class="field">
+              <label for="payment-inline-assigned-${payment.id}">Handled by</label>
+              <select class="select" id="payment-inline-assigned-${payment.id}">${memberOptions(payment.assignedTo)}</select>
+            </div>
+            <div class="field">
+              <label for="payment-inline-status-${payment.id}">Status</label>
+              <select class="select" id="payment-inline-status-${payment.id}">
+                <option ${payment.status === 'Unpaid' ? 'selected' : ''}>Unpaid</option>
+                <option ${payment.status === 'Partial' ? 'selected' : ''}>Partial</option>
+                <option ${payment.status === 'Paid' ? 'selected' : ''}>Paid</option>
+              </select>
+            </div>
+            <textarea class="textarea" id="payment-inline-note-${payment.id}" placeholder="Add a note">${escapeHtml(payment.note || '')}</textarea>
+            <div class="action-row">
+              <button class="small-btn" type="button" data-save-payment-inline="${payment.id}">Save changes</button>
+              <button class="small-btn" type="button" data-delete-payment="${payment.id}">Delete</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function previewTaskCard(task) {
+      const owner = task.assignedTo || task.createdBy;
+      const ownerClass = `m${Math.max(0, state.members.indexOf(owner))}`;
+      const occurrenceDate = task.occurrenceDate || task.dueDate || '';
+      const occurrenceDone = isTaskOccurrenceDone(task, occurrenceDate);
+      return `
+        <article class="preview-card">
+          <div class="card-head">
+            <div>
+              <h3 class="card-title">${escapeHtml(task.title)}</h3>
+              <div class="muted-note">Created by ${escapeHtml(task.createdBy)}</div>
+            </div>
+            <div class="action-row">
+              ${task.recurrence !== 'none'
+                ? `${occurrenceDone ? `<button class="small-btn" type="button" data-task-reopen="${task.id}" data-occurrence-date="${occurrenceDate}">Undo</button>` : `<button class="small-btn" type="button" data-task-done="${task.id}" data-occurrence-date="${occurrenceDate}">Complete</button>`}`
+                : `${task.status === 'Done' ? `<button class="small-btn" type="button" data-task-reopen="${task.id}" data-occurrence-date="${occurrenceDate}">Reopen</button>` : `<button class="small-btn" type="button" data-task-done="${task.id}" data-occurrence-date="${occurrenceDate}">Mark done</button>`}`}
+              <button class="small-btn" type="button" data-open-task-editor="${task.id}" data-date="${task.dueDate || ''}">Edit</button>
+            </div>
+          </div>
+          <div class="preview-meta">
+            <span class="preview-badge">${escapeHtml(task.recurrence !== 'none' ? (occurrenceDone ? 'Completed' : task.status) : task.status)}</span>
+            <span class="preview-badge member ${ownerClass}">${escapeHtml(owner)}</span>
+            <span class="preview-badge">${escapeHtml(task.priority)}</span>
+            ${task.tag ? `<span class="preview-badge">${escapeHtml(task.tag)}</span>` : ''}
+            ${task.recurrence !== 'none' ? `<span class="preview-badge recurring">${escapeHtml(recurrenceLabel(task.recurrence))}</span>` : ''}
+          </div>
+          ${task.details ? `<div class="summary-copy">${escapeHtml(task.details)}</div>` : ''}
+          ${task.note ? `<div class="summary-copy"><strong>Note:</strong> ${escapeHtml(task.note)}</div>` : ''}
+        </article>
+      `;
+    }
+
+    function previewEventCard(item) {
+      const owner = item.assignedTo || item.createdBy;
+      const ownerClass = `m${Math.max(0, state.members.indexOf(owner))}`;
+      const conflicts = findEventConflicts(item, item.occurrenceDate || item.date || '', item.time || '', item.endTime || '');
+      return `
+        <article class="preview-card">
+          <div class="card-head">
+            <div>
+              <h3 class="card-title">${escapeHtml(item.title)}</h3>
+              <div class="muted-note">${formatTimeRange(item.time, item.endTime) ? escapeHtml(formatTimeRange(item.time, item.endTime)) + ' • ' : ''}${escapeHtml(item.type)}</div>
+            </div>
+            <button class="small-btn" type="button" data-open-event-editor="${item.id}" data-date="${item.date || ''}">Edit</button>
+          </div>
+          <div class="preview-meta">
+            <span class="preview-badge member ${ownerClass}">${escapeHtml(owner)}</span>
+            ${item.location ? `<span class="preview-badge">${escapeHtml(item.location)}</span>` : ''}
+            ${item.type ? `<span class="preview-badge">${escapeHtml(item.type)}</span>` : ''}
+            ${item.recurrence !== 'none' ? `<span class="preview-badge recurring">${escapeHtml(recurrenceLabel(item.recurrence))}</span>` : ''}
+            ${conflicts.length ? `<span class="preview-badge overdue">Conflict</span>` : ''}
+          </div>
+          ${item.details ? `<div class="summary-copy">${escapeHtml(item.details)}</div>` : ''}
+          ${item.note ? `<div class="summary-copy"><strong>Note:</strong> ${escapeHtml(item.note)}</div>` : ''}
+          ${conflicts.length ? `<div class="recurrence-note">Overlaps with ${conflicts.map(conflict => `${conflict.title}${conflict.time ? ` at ${formatTime(conflict.time)}` : ''}`).join(', ')}.</div>` : ''}
+        </article>
+      `;
+    }
+
+    function taskEditorMarkup(task, dateValue) {
+      const editing = Boolean(task);
+      const recurrence = task?.recurrence || 'none';
+      return `
+        <div class="modal small">
+          <div class="modal-header">
+            <div class="modal-title">
+              <h3>${editing ? 'Edit task' : 'Add task'}</h3>
+              <p>${editing ? 'Adjust the task without turning the list itself into a form zoo.' : 'Create a new task and drop it onto the right day.'}</p>
+            </div>
+            <button class="close-btn" type="button" data-close-editor aria-label="Close">×</button>
+          </div>
+          <div class="editor-grid two-col">
+            <div class="field"><label for="editor-task-title">Task title</label><input class="input" id="editor-task-title" value="${escapeAttr(task?.title || '')}" /></div>
+            <div class="field"><label for="editor-task-created">Created by</label><select class="select" id="editor-task-created">${memberOptions(task?.createdBy || state.members[0])}</select></div>
+            <div class="field"><label for="editor-task-date">Due date</label><input class="input" id="editor-task-date" type="date" value="${escapeAttr(dateValue || '')}" /></div>
+            <div class="field"><label for="editor-task-assigned">Assigned to</label><select class="select" id="editor-task-assigned"><option value="">Unassigned</option>${memberOptions(task?.assignedTo || '')}</select></div>
+            <div class="field"><label for="editor-task-status">Status</label><select class="select" id="editor-task-status"><option ${task?.status === 'Open' || !task ? 'selected' : ''}>Open</option><option ${task?.status === 'Claimed' ? 'selected' : ''}>Claimed</option><option ${(task?.status === 'Done' && recurrence === 'none') ? 'selected' : ''}>Done</option></select></div>
+            <div class="field"><label for="editor-task-priority">Priority</label><select class="select" id="editor-task-priority"><option ${task?.priority === 'Low' ? 'selected' : ''}>Low</option><option ${task?.priority === 'Medium' || !task ? 'selected' : ''}>Medium</option><option ${task?.priority === 'High' ? 'selected' : ''}>High</option></select></div>
+            <div class="field"><label for="editor-task-recurrence">Repeats</label><select class="select" id="editor-task-recurrence">${RECURRENCE_OPTIONS.map(([value, label]) => `<option value="${value}" ${recurrence === value ? 'selected' : ''}>${label}</option>`).join('')}</select></div>
+            <div class="field"><label for="editor-task-recurrence-end">Repeat until</label><input class="input" id="editor-task-recurrence-end" type="date" value="${escapeAttr(task?.recurrenceEnd || '')}" /></div>
+            <div class="field full"><label for="editor-task-tag">Tag</label><input class="input" id="editor-task-tag" value="${escapeAttr(task?.tag || '')}" placeholder="Health, school, errand" /></div>
+            <div class="field full"><label for="editor-task-details">Details</label><textarea class="textarea" id="editor-task-details">${escapeHtml(task?.details || '')}</textarea></div>
+            <div class="field full"><label for="editor-task-note">Note</label><textarea class="textarea" id="editor-task-note">${escapeHtml(task?.note || '')}</textarea></div>
+          </div>
+          <div class="modal-footer">
+            <div class="muted-note">Date is editable here, and repeating tasks stay on the calendar without cloning a hundred garbage cards.</div>
+            <div class="footer-actions">
+              ${editing ? `<button class="ghost-btn danger" type="button" data-delete-editor="task">Delete</button>` : ''}
+              <button class="secondary-btn" type="button" data-close-editor>Cancel</button>
+              <button class="primary-btn" type="button" data-save-editor="task">${editing ? 'Save task' : 'Add task'}</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function paymentEditorMarkup(payment) {
+      const editing = Boolean(payment);
+      return `
+        <div class="modal small">
+          <div class="modal-header">
+            <div class="modal-title">
+              <h3>${editing ? 'Edit payment' : 'Add payment'}</h3>
+              <p>Keep the payment details in one place instead of breeding tiny controls on every card.</p>
+            </div>
+            <button class="close-btn" type="button" data-close-editor aria-label="Close">×</button>
+          </div>
+          <div class="editor-grid three-col">
+            <div class="field"><label for="editor-payment-title">Payment name</label><input class="input" id="editor-payment-title" value="${escapeAttr(payment?.title || '')}" /></div>
+            <div class="field"><label for="editor-payment-amount">Amount</label><input class="input" id="editor-payment-amount" type="number" min="0" step="0.01" value="${escapeAttr(payment ? String(payment.amount) : '')}" /></div>
+            <div class="field"><label for="editor-payment-date">Due date</label><input class="input" id="editor-payment-date" type="date" value="${escapeAttr(payment?.dueDate || '')}" /></div>
+            <div class="field"><label for="editor-payment-assigned">Handled by</label><select class="select" id="editor-payment-assigned">${memberOptions(payment?.assignedTo || state.members[0])}</select></div>
+            <div class="field"><label for="editor-payment-status">Status</label><select class="select" id="editor-payment-status"><option ${payment?.status === 'Unpaid' || !payment ? 'selected' : ''}>Unpaid</option><option ${payment?.status === 'Partial' ? 'selected' : ''}>Partial</option><option ${payment?.status === 'Paid' ? 'selected' : ''}>Paid</option></select></div>
+            <div class="field"><label for="editor-payment-category">Category</label><input class="input" id="editor-payment-category" value="${escapeAttr(payment?.category || '')}" /></div>
+            <div class="field full"><label for="editor-payment-note">Note</label><textarea class="textarea" id="editor-payment-note">${escapeHtml(payment?.note || '')}</textarea></div>
+          </div>
+          <div class="modal-footer">
+            <div class="muted-note">Payment editing stays out of the main list until you actually need it.</div>
+            <div class="footer-actions">
+              ${editing ? `<button class="ghost-btn danger" type="button" data-delete-editor="payment">Delete</button>` : ''}
+              <button class="secondary-btn" type="button" data-close-editor>Cancel</button>
+              <button class="primary-btn" type="button" data-save-editor="payment">${editing ? 'Save payment' : 'Add payment'}</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function eventEditorMarkup(item, dateValue) {
+      const editing = Boolean(item);
+      const recurrence = item?.recurrence || 'none';
+      return `
+        <div class="modal small">
+          <div class="modal-header">
+            <div class="modal-title">
+              <h3>${editing ? 'Edit appointment/event' : 'Add appointment/event'}</h3>
+              <p>Doctor visits and real life deserve their own clean editor instead of being taped onto chores.</p>
+            </div>
+            <button class="close-btn" type="button" data-close-editor aria-label="Close">×</button>
+          </div>
+          <div class="editor-grid two-col">
+            <div class="field"><label for="editor-event-title">Title</label><input class="input" id="editor-event-title" value="${escapeAttr(item?.title || '')}" /></div>
+            <div class="field"><label for="editor-event-type">Type</label><select class="select" id="editor-event-type">${EVENT_TYPES.map(type => `<option ${item?.type === type || (!item && type === EVENT_TYPES[0]) ? 'selected' : ''}>${type}</option>`).join('')}</select></div>
+            <div class="field"><label for="editor-event-created">Created by</label><select class="select" id="editor-event-created">${memberOptions(item?.createdBy || state.members[0])}</select></div>
+            <div class="field"><label for="editor-event-assigned">Assigned to</label><select class="select" id="editor-event-assigned"><option value="">Unassigned</option>${memberOptions(item?.assignedTo || '')}</select></div>
+            <div class="field"><label for="editor-event-date">Date</label><input class="input" id="editor-event-date" type="date" value="${escapeAttr(dateValue || '')}" /></div>
+            <div class="field"><label for="editor-event-time">Start time</label><input class="input" id="editor-event-time" type="time" value="${escapeAttr(item?.time || '')}" /></div>
+            <div class="field"><label for="editor-event-end-time">End time</label><input class="input" id="editor-event-end-time" type="time" value="${escapeAttr(item?.endTime || '')}" /></div>
+            <div class="field"><label for="editor-event-recurrence">Repeats</label><select class="select" id="editor-event-recurrence">${RECURRENCE_OPTIONS.map(([value, label]) => `<option value="${value}" ${recurrence === value ? 'selected' : ''}>${label}</option>`).join('')}</select></div>
+            <div class="field"><label for="editor-event-recurrence-end">Repeat until</label><input class="input" id="editor-event-recurrence-end" type="date" value="${escapeAttr(item?.recurrenceEnd || '')}" /></div>
+            <div class="field full"><label for="editor-event-location">Location</label><input class="input" id="editor-event-location" value="${escapeAttr(item?.location || '')}" placeholder="Clinic, school, office" /></div>
+            <div class="conflict-banner hidden" id="eventConflictBanner"></div>
+            <div class="field full"><label for="editor-event-details">Details</label><textarea class="textarea" id="editor-event-details">${escapeHtml(item?.details || '')}</textarea></div>
+            <div class="field full"><label for="editor-event-note">Note</label><textarea class="textarea" id="editor-event-note">${escapeHtml(item?.note || '')}</textarea></div>
+          </div>
+          <div class="modal-footer">
+            <div class="muted-note">Date, start time, end time, and repeats all live here. Conflicts warn you before the calendar turns feral.</div>
+            <div class="footer-actions">
+              ${editing ? `<button class="ghost-btn danger" type="button" data-delete-editor="event">Delete</button>` : ''}
+              <button class="secondary-btn" type="button" data-close-editor>Cancel</button>
+              <button class="primary-btn" type="button" data-save-editor="event">${editing ? 'Save appointment/event' : 'Add appointment/event'}</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindCalendarDnD() {
+      document.querySelectorAll('[data-calendar-chip-id]').forEach(chip => {
+        chip.addEventListener('dragstart', event => {
+          ui.draggedItem = {
+            kind: chip.dataset.calendarChipKind,
+            id: chip.dataset.calendarChipId,
+            occurrenceDate: chip.dataset.calendarOccurrenceDate || ''
+          };
+          event.dataTransfer.effectAllowed = 'move';
+          ui.suppressDayOpenUntil = Date.now() + 500;
+        });
+        chip.addEventListener('dragend', () => {
+          document.querySelectorAll('.day-cell.drag-target').forEach(el => el.classList.remove('drag-target'));
+          ui.draggedItem = null;
+        });
+      });
+
+      document.querySelectorAll('[data-day-cell]').forEach(cell => {
+        cell.addEventListener('dragover', event => {
+          if (!ui.draggedItem) return;
+          event.preventDefault();
+          cell.classList.add('drag-target');
+        });
+        cell.addEventListener('dragleave', () => cell.classList.remove('drag-target'));
+        cell.addEventListener('drop', event => {
+          event.preventDefault();
+          cell.classList.remove('drag-target');
+          if (!ui.draggedItem) return;
+          moveCalendarItem(ui.draggedItem.kind, ui.draggedItem.id, cell.dataset.dayCell, ui.draggedItem.occurrenceDate || '');
+          ui.draggedItem = null;
+          ui.suppressDayOpenUntil = Date.now() + 600;
+        });
+        cell.addEventListener('dragend', () => {
+          document.querySelectorAll('.day-cell.drag-target').forEach(el => el.classList.remove('drag-target'));
+          ui.draggedItem = null;
+        });
+      });
+    }
+
+    function getCalendarItemsForDate(date) {
+      const memberFilter = state.calendarFamilyFilter;
+      const includeMember = name => {
+        if (memberFilter === 'all') return true;
+        return state.members[Number(memberFilter)] === name;
+      };
+
+      let items = [];
+      if (state.calendarMode === 'tasks' || state.calendarMode === 'all') {
+        items = items.concat(state.tasks
+          .filter(task => taskOccursOnDate(task, date))
+          .filter(task => includeMember(task.assignedTo || task.createdBy))
+          .map(task => ({ ...task, kind: 'task', occurrenceDate: date, occurrenceDone: isTaskOccurrenceDone(task, date) })));
+      }
+      if (state.calendarMode === 'events' || state.calendarMode === 'all') {
+        items = items.concat(state.events
+          .filter(item => eventOccursOnDate(item, date))
+          .filter(item => includeMember(item.assignedTo || item.createdBy))
+          .map(item => ({ ...item, kind: 'event', occurrenceDate: date })));
+      }
+      return items.sort(calendarItemSort);
+    }
+
+    function calendarChip(item) {
+      const owner = item.assignedTo || item.createdBy;
+      const ownerIndex = Math.max(0, state.members.indexOf(owner));
+      const hasConflict = item.kind === 'event' && findEventConflicts(item, item.occurrenceDate || item.date || '', item.time || '', item.endTime || '').length > 0;
+      const text = item.kind === 'event'
+        ? `${hasConflict ? '⚠ ' : ''}${item.time ? formatTime(item.time) + ' ' : ''}${item.title}`
+        : `${item.occurrenceDone || item.status === 'Done' ? '✓ ' : item.status === 'Claimed' ? '• ' : '○ '}${item.title}`;
+      return `<div class="calendar-chip m${ownerIndex} ${hasConflict ? 'conflict' : ''}" draggable="true" data-calendar-chip-id="${item.id}" data-calendar-chip-kind="${item.kind}" data-calendar-occurrence-date="${escapeAttr(item.occurrenceDate || item.date || item.dueDate || '')}">${escapeHtml(text)}</div>`;
+    }
+
+    function compactTask(task) {
+      const nextDue = task.recurrence !== 'none' ? oldestOutstandingTaskOccurrence(task) : task.dueDate;
+      const overdue = nextDue && task.status !== 'Done' && nextDue < todayISO();
+      return `
+        <div class="compact-item">
+          <div class="compact-item-title"><span>${escapeHtml(task.title)}</span><span>${nextDue ? escapeHtml(formatDate(nextDue)) : ''}</span></div>
+          <div class="compact-meta">
+            <span>${escapeHtml(task.status)}</span>
+            <span>${escapeHtml(task.priority)}</span>
+            ${task.recurrence !== 'none' ? `<span>${escapeHtml(recurrenceLabel(task.recurrence))}</span>` : ''}
+            ${overdue ? '<span>Overdue</span>' : ''}
+          </div>
+          ${task.note || task.details ? `<div class="compact-note">${escapeHtml(task.note || task.details)}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function compactPayment(payment) {
+      return `
+        <div class="compact-item">
+          <div class="compact-item-title"><span>${escapeHtml(payment.title)}</span><span>${escapeHtml(money(payment.amount))}</span></div>
+          <div class="compact-meta">
+            <span>${payment.dueDate ? escapeHtml(formatDate(payment.dueDate)) : 'No due date'}</span>
+            <span>${escapeHtml(payment.status)}</span>
+          </div>
+          ${payment.note ? `<div class="compact-note">${escapeHtml(payment.note)}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function addTask(event) {
+      event.preventDefault();
+      const title = els.taskTitle.value.trim();
+      if (!title) return;
+      const recurrence = els.taskRecurrence.value || 'none';
+      const dueDate = els.taskDueDate.value || '';
+      const task = {
+        id: uid(),
+        title,
+        createdBy: els.taskCreatedBy.value,
+        dueDate,
+        priority: els.taskPriority.value,
+        recurrence,
+        recurrenceEnd: normalizeRecurrenceEnd(dueDate, recurrence, els.taskRecurrenceEnd.value || ''),
+        tag: els.taskTag.value.trim(),
+        details: els.taskDetails.value.trim(),
+        status: 'Open',
+        assignedTo: '',
+        note: '',
+        createdAt: Date.now(),
+        completedBy: '',
+        completedAt: '',
+        completedDates: []
+      };
+      state.tasks.unshift(task);
+      logActivity(`${activeActorName()} added task “${task.title}”${task.recurrence !== 'none' ? ` and set it to repeat ${recurrenceLabel(task.recurrence).toLowerCase()}` : ''}.`);
+      els.taskDrawer.reset();
+      ui.showTaskDrawer = false;
+      persistAndRender();
+    }
+
+    function addPayment(event) {
+      event.preventDefault();
+      const title = els.paymentTitle.value.trim();
+      const amount = Number(els.paymentAmount.value || 0);
+      if (!title || amount <= 0) return;
+      const payment = {
+        id: uid(),
+        title,
+        amount,
+        dueDate: els.paymentDueDate.value,
+        assignedTo: els.paymentAssigned.value,
+        status: els.paymentStatus.value,
+        category: els.paymentCategory.value.trim(),
+        note: els.paymentNote.value.trim(),
+        createdAt: Date.now()
+      };
+      state.payments.unshift(payment);
+      logActivity(`${activeActorName()} added payment “${payment.title}” for ${money(payment.amount)}.`);
+      els.paymentDrawer.reset();
+      ui.showPaymentDrawer = false;
+      persistAndRender();
+    }
+
+    function openDayPreview(date) {
+      ui.dayPreviewDate = date;
+      renderDayPreview();
+    }
+
+    function closeDayPreview() {
+      ui.dayPreviewDate = '';
+      renderDayPreview();
+    }
+
+    function openTaskEditor(id = '', date = '') {
+      ui.editor = { kind: 'task', id, date: date || ui.dayPreviewDate || todayISO() };
+      renderEditor();
+    }
+
+    function openPaymentEditor(id = '') {
+      ui.editor = { kind: 'payment', id, date: '' };
+      renderEditor();
+    }
+
+    function openEventEditor(id = '', date = '') {
+      ui.editor = { kind: 'event', id, date: date || ui.dayPreviewDate || todayISO() };
+      renderEditor();
+    }
+
+    function closeEditor() {
+      ui.editor = null;
+      renderEditor();
+    }
+
+    function saveTaskFromEditor() {
+      const title = document.getElementById('editor-task-title')?.value.trim();
+      if (!title) return;
+      const dueDate = document.getElementById('editor-task-date')?.value || '';
+      const assignedTo = document.getElementById('editor-task-assigned')?.value || '';
+      const recurrence = document.getElementById('editor-task-recurrence')?.value || 'none';
+      const statusValue = document.getElementById('editor-task-status')?.value || 'Open';
+      const payload = {
+        title,
+        createdBy: document.getElementById('editor-task-created')?.value || state.members[0],
+        dueDate,
+        assignedTo,
+        status: recurrence !== 'none' && statusValue === 'Done' ? (assignedTo ? 'Claimed' : 'Open') : statusValue,
+        priority: document.getElementById('editor-task-priority')?.value || 'Medium',
+        recurrence,
+        recurrenceEnd: normalizeRecurrenceEnd(dueDate, recurrence, document.getElementById('editor-task-recurrence-end')?.value || ''),
+        tag: document.getElementById('editor-task-tag')?.value.trim() || '',
+        details: document.getElementById('editor-task-details')?.value.trim() || '',
+        note: document.getElementById('editor-task-note')?.value.trim() || ''
+      };
+      if (!ui.editor?.id) {
+        state.tasks.unshift({ id: uid(), ...payload, createdAt: Date.now(), completedBy: '', completedAt: '', completedDates: [] });
+        logActivity(`${activeActorName()} added task “${payload.title}” from the calendar editor.`);
+      } else {
+        const task = state.tasks.find(item => item.id === ui.editor.id);
+        if (!task) return;
+        const beforeDate = task.dueDate;
+        Object.assign(task, payload);
+        if (!Array.isArray(task.completedDates)) task.completedDates = [];
+        if (task.recurrence === 'none') task.completedDates = task.completedDates.filter(date => date === task.dueDate);
+        logActivity(`${activeActorName()} edited task “${task.title}”${beforeDate !== task.dueDate ? ` and changed its anchor date to ${formatDate(task.dueDate)}` : ''}.`);
+      }
+      const reopenPreviewDate = ui.dayPreviewDate || payload.dueDate;
+      ui.editor = null;
+      if (ui.dayPreviewDate) ui.dayPreviewDate = reopenPreviewDate;
+      persistAndRender();
+    }
+
+    function savePaymentFromEditor() {
+      const title = document.getElementById('editor-payment-title')?.value.trim();
+      const amount = Number(document.getElementById('editor-payment-amount')?.value || 0);
+      if (!title || amount <= 0) return;
+      const payload = {
+        title,
+        amount,
+        dueDate: document.getElementById('editor-payment-date')?.value || '',
+        assignedTo: document.getElementById('editor-payment-assigned')?.value || state.members[0],
+        status: document.getElementById('editor-payment-status')?.value || 'Unpaid',
+        category: document.getElementById('editor-payment-category')?.value.trim() || '',
+        note: document.getElementById('editor-payment-note')?.value.trim() || ''
+      };
+      if (!ui.editor?.id) {
+        state.payments.unshift({ id: uid(), ...payload, createdAt: Date.now() });
+        logActivity(`${activeActorName()} added payment “${payload.title}” for ${money(payload.amount)}.`);
+      } else {
+        const payment = state.payments.find(item => item.id === ui.editor.id);
+        if (!payment) return;
+        Object.assign(payment, payload);
+        logActivity(`${activeActorName()} edited payment “${payment.title}”.`);
+      }
+      ui.editor = null;
+      persistAndRender();
+    }
+
+    function saveEventFromEditor() {
+      const title = document.getElementById('editor-event-title')?.value.trim();
+      if (!title) return;
+      const date = document.getElementById('editor-event-date')?.value || '';
+      const startTime = document.getElementById('editor-event-time')?.value || '';
+      const recurrence = document.getElementById('editor-event-recurrence')?.value || 'none';
+      const payload = {
+        title,
+        type: document.getElementById('editor-event-type')?.value || EVENT_TYPES[0],
+        createdBy: document.getElementById('editor-event-created')?.value || state.members[0],
+        assignedTo: document.getElementById('editor-event-assigned')?.value || '',
+        date,
+        time: startTime,
+        endTime: normalizeEndTime(document.getElementById('editor-event-end-time')?.value || '', startTime),
+        recurrence,
+        recurrenceEnd: normalizeRecurrenceEnd(date, recurrence, document.getElementById('editor-event-recurrence-end')?.value || ''),
+        location: document.getElementById('editor-event-location')?.value.trim() || '',
+        details: document.getElementById('editor-event-details')?.value.trim() || '',
+        note: document.getElementById('editor-event-note')?.value.trim() || ''
+      };
+      if (!ui.editor?.id) {
+        state.events.unshift({ id: uid(), ...payload, createdAt: Date.now() });
+        logActivity(`${activeActorName()} added appointment/event “${payload.title}”${payload.recurrence !== 'none' ? ` repeating ${recurrenceLabel(payload.recurrence).toLowerCase()}` : ''}.`);
+      } else {
+        const item = state.events.find(entry => entry.id === ui.editor.id);
+        if (!item) return;
+        const beforeDate = item.date;
+        Object.assign(item, payload);
+        logActivity(`${activeActorName()} edited appointment/event “${item.title}”${beforeDate !== item.date ? ` and moved its anchor date to ${formatDate(item.date)}` : ''}.`);
+      }
+      const reopenPreviewDate = ui.dayPreviewDate || payload.date;
+      ui.editor = null;
+      if (ui.dayPreviewDate) ui.dayPreviewDate = reopenPreviewDate;
+      persistAndRender();
+    }
+
+    function claimTask(id, member) {
+      const task = state.tasks.find(item => item.id === id);
+      if (!task) return;
+      task.assignedTo = member || '';
+      task.status = member ? 'Claimed' : 'Open';
+      task.completedBy = '';
+      task.completedAt = '';
+      logActivity(`${activeActorName()} ${member ? `assigned task “${task.title}” to ${member}` : `cleared the owner on task “${task.title}”`}.`);
+      persistAndRender();
+    }
+
+    function markTaskDone(id, occurrenceDate = '') {
+      const task = state.tasks.find(item => item.id === id);
+      if (!task) return;
+      const targetDate = occurrenceDate || (task.recurrence !== 'none' ? oldestOutstandingTaskOccurrence(task) : task.dueDate);
+      if (!targetDate) return;
+      if (task.recurrence !== 'none') {
+        task.completedDates = Array.isArray(task.completedDates) ? task.completedDates : [];
+        if (!task.completedDates.includes(targetDate)) task.completedDates.push(targetDate);
+        task.completedDates = [...new Set(task.completedDates)].sort();
+        task.completedBy = activeActorName();
+        task.completedAt = new Date().toISOString();
+        logActivity(`${activeActorName()} completed the ${formatDate(targetDate)} occurrence of “${task.title}”.`);
+      } else {
+        task.status = 'Done';
+        task.completedBy = task.assignedTo || activeActorName();
+        task.completedAt = new Date().toISOString();
+        logActivity(`${activeActorName()} marked task “${task.title}” done.`);
+      }
+      persistAndRender();
+    }
+
+    function reopenTask(id, occurrenceDate = '') {
+      const task = state.tasks.find(item => item.id === id);
+      if (!task) return;
+      if (task.recurrence !== 'none') {
+        const targetDate = occurrenceDate || lastCompletedOccurrence(task);
+        if (!targetDate) return;
+        task.completedDates = (task.completedDates || []).filter(date => date !== targetDate);
+        logActivity(`${activeActorName()} reopened the ${formatDate(targetDate)} occurrence of “${task.title}”.`);
+      } else {
+        task.status = task.assignedTo ? 'Claimed' : 'Open';
+        task.completedBy = '';
+        task.completedAt = '';
+        logActivity(`${activeActorName()} reopened task “${task.title}”.`);
+      }
+      persistAndRender();
+    }
+
+    function saveTaskNote(id) {
+      const task = state.tasks.find(item => item.id === id);
+      const area = document.getElementById(`task-note-${id}`);
+      if (!task || !area) return;
+      task.note = area.value.trim();
+      logActivity(`${activeActorName()} updated the note on task “${task.title}”.`);
+      persistAndRender();
+    }
+
+    function togglePaymentQuickStatus(id) {
+      const payment = state.payments.find(item => item.id === id);
+      if (!payment) return;
+      payment.status = payment.status === 'Paid' ? 'Unpaid' : 'Paid';
+      logActivity(`${activeActorName()} changed payment “${payment.title}” to ${payment.status.toLowerCase()}.`);
+      persistAndRender();
+    }
+
+    function savePaymentInline(id) {
+      const payment = state.payments.find(item => item.id === id);
+      if (!payment) return;
+      payment.assignedTo = document.getElementById(`payment-inline-assigned-${id}`)?.value || state.members[0];
+      payment.status = document.getElementById(`payment-inline-status-${id}`)?.value || 'Unpaid';
+      payment.note = document.getElementById(`payment-inline-note-${id}`)?.value.trim() || '';
+      logActivity(`${activeActorName()} updated payment “${payment.title}”.`);
+      persistAndRender();
+    }
+
+    function moveCalendarItem(kind, id, date, sourceDate = '') {
+      if (!date) return;
+      if (kind === 'task') {
+        const task = state.tasks.find(item => item.id === id);
+        if (!task) return;
+        if (task.recurrence !== 'none' && sourceDate) {
+          const shift = diffDays(sourceDate, date);
+          task.dueDate = shiftISO(task.dueDate, shift);
+          if (task.recurrenceEnd) task.recurrenceEnd = shiftISO(task.recurrenceEnd, shift);
+          task.completedDates = (task.completedDates || []).map(doneDate => shiftISO(doneDate, shift));
+          logActivity(`${activeActorName()} shifted recurring task “${task.title}” so the series now anchors on ${formatDate(task.dueDate)}.`);
+        } else {
+          task.dueDate = date;
+          logActivity(`${activeActorName()} moved task “${task.title}” to ${formatDate(date)}.`);
+        }
+      }
+      if (kind === 'event') {
+        const item = state.events.find(entry => entry.id === id);
+        if (!item) return;
+        if (item.recurrence !== 'none' && sourceDate) {
+          const shift = diffDays(sourceDate, date);
+          item.date = shiftISO(item.date, shift);
+          if (item.recurrenceEnd) item.recurrenceEnd = shiftISO(item.recurrenceEnd, shift);
+          logActivity(`${activeActorName()} shifted recurring appointment/event “${item.title}” so the series now anchors on ${formatDate(item.date)}.`);
+        } else {
+          item.date = date;
+          logActivity(`${activeActorName()} moved appointment/event “${item.title}” to ${formatDate(date)}.`);
+        }
+      }
+      persistAndRender();
+    }
+
+    function deleteTask(id) {
+      if (!id) return;
+      const task = state.tasks.find(item => item.id === id);
+      state.tasks = state.tasks.filter(item => item.id !== id);
+      ui.editor = null;
+      if (task) logActivity(`${activeActorName()} deleted task “${task.title}”.`);
+      persistAndRender();
+    }
+
+    function deletePayment(id) {
+      if (!id) return;
+      const payment = state.payments.find(item => item.id === id);
+      state.payments = state.payments.filter(item => item.id !== id);
+      ui.editor = null;
+      if (payment) logActivity(`${activeActorName()} deleted payment “${payment.title}”.`);
+      persistAndRender();
+    }
+
+    function deleteEvent(id) {
+      if (!id) return;
+      const item = state.events.find(entry => entry.id === id);
+      state.events = state.events.filter(entry => entry.id !== id);
+      ui.editor = null;
+      if (item) logActivity(`${activeActorName()} deleted appointment/event “${item.title}”.`);
+      persistAndRender();
+    }
+
+    function renameMember(index, newName) {
+      const clean = newName || `Family Member ${index + 1}`;
+      const oldName = state.members[index];
+      if (clean === oldName) return;
+      state.members[index] = clean;
+      state.tasks.forEach(task => {
+        if (task.createdBy === oldName) task.createdBy = clean;
+        if (task.assignedTo === oldName) task.assignedTo = clean;
+        if (task.completedBy === oldName) task.completedBy = clean;
+      });
+      state.payments.forEach(payment => {
+        if (payment.assignedTo === oldName) payment.assignedTo = clean;
+      });
+      state.events.forEach(item => {
+        if (item.createdBy === oldName) item.createdBy = clean;
+        if (item.assignedTo === oldName) item.assignedTo = clean;
+      });
+      state.activity.forEach(entry => {
+        if (entry.actor === oldName) entry.actor = clean;
+        entry.message = String(entry.message || '').replaceAll(oldName, clean);
+      });
+      logActivity(`${activeActorName()} renamed ${oldName} to ${clean}.`);
+      persistAndRender();
+    }
+
+    function toggleTheme() {
+      state.theme = state.theme === 'dark' ? 'light' : 'dark';
+      applyTheme();
+      persistAndRender(false);
+      render();
+    }
+
+    function shiftCalendar(offset) {
+      const { year, monthIndex } = monthParts(state.calendarMonth);
+      const next = new Date(year, monthIndex + offset, 1);
+      state.calendarMonth = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}`;
+      persistAndRender();
+    }
+
+    function applyTheme() {
+      document.body.classList.toggle('dark', state.theme === 'dark');
+    }
+
+    function persistAndRender(doRender = true) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if (doRender) render();
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+        for (const key of LEGACY_KEYS) {
+          const legacy = localStorage.getItem(key);
+          if (legacy) return JSON.parse(legacy);
+        }
+      } catch {}
+      return structuredClone(defaultState);
+    }
+
+    function normalizeState(input) {
+      const safe = { ...structuredClone(defaultState), ...(input || {}) };
+      safe.members = Array.isArray(safe.members) && safe.members.length === 3
+        ? safe.members.map((name, index) => String(name || `Family Member ${index + 1}`))
+        : structuredClone(defaultState.members);
+      safe.tasks = Array.isArray(safe.tasks) ? safe.tasks.map(task => ({
+        id: String(task.id || uid()),
+        title: String(task.title || ''),
+        createdBy: safe.members.includes(task.createdBy) ? task.createdBy : safe.members[0],
+        dueDate: String(task.dueDate || ''),
+        priority: ['Low', 'Medium', 'High'].includes(task.priority) ? task.priority : 'Medium',
+        recurrence: ['none', 'daily', 'weekly', 'monthly'].includes(task.recurrence) ? task.recurrence : 'none',
+        recurrenceEnd: String(task.recurrenceEnd || ''),
+        tag: String(task.tag || ''),
+        details: String(task.details || ''),
+        status: ['Open', 'Claimed', 'Done'].includes(task.status) ? task.status : 'Open',
+        assignedTo: safe.members.includes(task.assignedTo) ? task.assignedTo : '',
+        note: String(task.note || ''),
+        createdAt: Number(task.createdAt || Date.now()),
+        completedBy: safe.members.includes(task.completedBy) ? task.completedBy : '',
+        completedAt: String(task.completedAt || ''),
+        completedDates: Array.isArray(task.completedDates) ? task.completedDates.map(String) : []
+      })).map(task => ({ ...task, recurrenceEnd: normalizeRecurrenceEnd(task.dueDate, task.recurrence, task.recurrenceEnd), status: task.recurrence !== 'none' && task.status === 'Done' ? (task.assignedTo ? 'Claimed' : 'Open') : task.status })) : [];
+      safe.payments = Array.isArray(safe.payments) ? safe.payments.map(payment => ({
+        id: String(payment.id || uid()),
+        title: String(payment.title || ''),
+        amount: Number(payment.amount || 0),
+        dueDate: String(payment.dueDate || ''),
+        assignedTo: safe.members.includes(payment.assignedTo) ? payment.assignedTo : safe.members[0],
+        status: ['Unpaid', 'Partial', 'Paid'].includes(payment.status) ? payment.status : 'Unpaid',
+        category: String(payment.category || ''),
+        note: String(payment.note || ''),
+        createdAt: Number(payment.createdAt || Date.now())
+      })) : [];
+      safe.events = Array.isArray(safe.events) ? safe.events.map(item => ({
+        id: String(item.id || uid()),
+        title: String(item.title || ''),
+        type: EVENT_TYPES.includes(item.type) ? item.type : EVENT_TYPES[0],
+        createdBy: safe.members.includes(item.createdBy) ? item.createdBy : safe.members[0],
+        assignedTo: safe.members.includes(item.assignedTo) ? item.assignedTo : '',
+        date: String(item.date || item.dueDate || ''),
+        time: String(item.time || ''),
+        endTime: normalizeEndTime(String(item.endTime || ''), String(item.time || '')),
+        recurrence: ['none', 'daily', 'weekly', 'monthly'].includes(item.recurrence) ? item.recurrence : 'none',
+        recurrenceEnd: normalizeRecurrenceEnd(String(item.date || item.dueDate || ''), item.recurrence, String(item.recurrenceEnd || '')),
+        location: String(item.location || ''),
+        details: String(item.details || ''),
+        note: String(item.note || ''),
+        createdAt: Number(item.createdAt || Date.now())
+      })) : [];
+      safe.activity = Array.isArray(safe.activity) ? safe.activity.map(entry => ({
+        id: String(entry.id || uid()),
+        actor: safe.members.includes(entry.actor) ? entry.actor : String(entry.actor || safe.members[0]),
+        message: String(entry.message || ''),
+        at: String(entry.at || new Date().toISOString())
+      })).slice(0, 100) : [];
+      if (!['All', 'Open', 'Claimed', 'Done'].includes(safe.taskFilter)) safe.taskFilter = 'All';
+      if (!['All', 'Unpaid', 'Partial', 'Paid'].includes(safe.paymentFilter)) safe.paymentFilter = 'All';
+      if (!['tasks', 'events', 'all'].includes(safe.calendarMode)) safe.calendarMode = 'all';
+      if (!['all', '0', '1', '2'].includes(String(safe.calendarFamilyFilter))) safe.calendarFamilyFilter = 'all';
+      if (!/^\d{4}-\d{2}$/.test(String(safe.calendarMonth || ''))) safe.calendarMonth = currentMonthKey();
+      safe.myMemberView = [0,1,2].includes(Number(safe.myMemberView)) ? Number(safe.myMemberView) : 0;
+      safe.activeActor = clampMemberIndex(Number(safe.activeActor));
+      safe.theme = safe.theme === 'dark' ? 'dark' : 'light';
+      safe.activityExpanded = Boolean(safe.activityExpanded);
+      return safe;
+    }
+
+    function renderActivityLog() {
+      if (!els.activityLog) return;
+      if (!state.activity.length) {
+        els.activityLog.innerHTML = `<div class="empty">No activity yet. Once people start editing, moving, or completing things, the breadcrumb trail shows up here.</div>`;
+        return;
+      }
+      const total = state.activity.length;
+      const visibleCount = state.activityExpanded ? 24 : 6;
+      const visible = state.activity.slice(0, visibleCount);
+      const hidden = Math.max(0, total - visible.length);
+      const latest = state.activity[0];
+      els.activityLog.innerHTML = `
+        <div class="activity-summary-strip">
+          <div class="activity-summary-card">
+            <div class="mini-stat-label">Tracked changes</div>
+            <div class="mini-stat-value">${total}</div>
+          </div>
+          <div class="activity-summary-card latest">
+            <div class="mini-stat-label">Latest update</div>
+            <div class="activity-latest-line">${escapeHtml(latest.actor)} · ${escapeHtml(formatDateTime(latest.at))}</div>
+          </div>
+        </div>
+        <div class="activity-list ${state.activityExpanded ? 'expanded' : 'collapsed'}">
+          ${visible.map(entry => {
+            const idx = Math.max(0, state.members.indexOf(entry.actor));
+            return `
+              <article class="activity-item">
+                <div class="activity-topline">
+                  <div class="activity-actor m${idx}"><span class="member-dot"></span>${escapeHtml(entry.actor)}</div>
+                  <div class="activity-time">${escapeHtml(formatDateTime(entry.at))}</div>
+                </div>
+                <div class="activity-message">${escapeHtml(entry.message)}</div>
+              </article>
+            `;
+          }).join('')}
+        </div>
+        ${hidden ? `<div class="muted-note">${hidden} older log entr${hidden === 1 ? 'y is' : 'ies are'} tucked away until you expand the log.</div>` : ''}
+      `;
+    }
+
+    function clampMemberIndex(value) {
+      return [0, 1, 2].includes(Number(value)) ? Number(value) : 0;
+    }
+
+    function activeActorName() {
+      return state.members[clampMemberIndex(state.activeActor)] || state.members[0];
+    }
+
+    function logActivity(message, actor = activeActorName()) {
+      state.activity.unshift({ id: uid(), actor, message, at: new Date().toISOString() });
+      state.activity = state.activity.slice(0, 100);
+    }
+
+    function recurrenceLabel(value) {
+      return Object.fromEntries(RECURRENCE_OPTIONS)[value] || 'Does not repeat';
+    }
+
+    function normalizeRecurrenceEnd(startDate, recurrence, endDate) {
+      if (recurrence === 'none') return '';
+      if (!startDate) return endDate || '';
+      if (!endDate || endDate < startDate) return startDate;
+      return endDate;
+    }
+
+    function normalizeEndTime(endTime, startTime) {
+      if (!endTime) return '';
+      if (!startTime) return endTime;
+      return endTime > startTime ? endTime : '';
+    }
+
+    function taskOccursOnDate(task, date) {
+      return occursOnDate(task, date, 'dueDate');
+    }
+
+    function eventOccursOnDate(item, date) {
+      return occursOnDate(item, date, 'date');
+    }
+
+    function occursOnDate(item, date, field) {
+      const start = String(item[field] || '');
+      if (!start || !date || date < start) return false;
+      const recurrence = item.recurrence || 'none';
+      if (recurrence === 'none') return date === start;
+      const end = item.recurrenceEnd || '';
+      if (end && date > end) return false;
+      if (recurrence === 'daily') return true;
+      if (recurrence === 'weekly') return diffDays(start, date) % 7 === 0;
+      if (recurrence === 'monthly') {
+        const [sy, sm, sd] = start.split('-').map(Number);
+        const [dy, dm] = date.split('-').map(Number);
+        const monthDate = new Date(dy, dm - 1, 1);
+        const lastDay = new Date(dy, dm, 0).getDate();
+        return Number(date.slice(-2)) === Math.min(sd, lastDay) && monthDate >= new Date(sy, sm - 1, 1);
+      }
+      return false;
+    }
+
+    function nextTaskOccurrence(task, fromDate = todayISO()) {
+      if (!task.dueDate) return '';
+      if (task.recurrence === 'none') return task.status === 'Done' ? '' : task.dueDate;
+      const start = fromDate > task.dueDate ? fromDate : task.dueDate;
+      let cursor = start;
+      for (let i = 0; i < 730; i += 1) {
+        if (taskOccursOnDate(task, cursor) && !isTaskOccurrenceDone(task, cursor)) return cursor;
+        if (task.recurrenceEnd && cursor >= task.recurrenceEnd) break;
+        cursor = addDays(cursor, 1);
+      }
+      return '';
+    }
+
+    function oldestOutstandingTaskOccurrence(task) {
+      return nextTaskOccurrence(task, task.dueDate || todayISO());
+    }
+
+    function isTaskOccurrenceDone(task, date) {
+      if (!date) return false;
+      if (task.recurrence !== 'none') return Array.isArray(task.completedDates) && task.completedDates.includes(date);
+      return task.status === 'Done' && task.dueDate === date;
+    }
+
+    function lastCompletedOccurrence(task) {
+      if (task.recurrence !== 'none') return [...(task.completedDates || [])].sort().slice(-1)[0] || '';
+      return task.status === 'Done' ? task.dueDate : '';
+    }
+
+    function diffDays(start, end) {
+      const a = new Date(`${start}T00:00:00`);
+      const b = new Date(`${end}T00:00:00`);
+      return Math.round((b - a) / 86400000);
+    }
+
+    function shiftISO(isoDate, days) {
+      if (!isoDate) return '';
+      return addDays(isoDate, days);
+    }
+
+    function formatTimeRange(start, end) {
+      if (!start && !end) return '';
+      if (start && end) return `${formatTime(start)}–${formatTime(end)}`;
+      return start ? formatTime(start) : formatTime(end);
+    }
+
+    function getDateConflictGroups(date) {
+      const events = state.events.filter(item => eventOccursOnDate(item, date)).map(item => ({ ...item, occurrenceDate: date })).sort(eventSort);
+      const groups = [];
+      events.forEach(item => {
+        const conflicts = findEventConflicts(item, date, item.time || '', item.endTime || '');
+        conflicts.forEach(other => {
+          const label = [item.title, other.title].sort().join(' ↔ ');
+          if (!groups.includes(label)) groups.push(label);
+        });
+      });
+      return groups;
+    }
+
+    function findEventConflicts(candidate, date, time, endTime, excludeId = candidate.id) {
+      if (!date || !time) return [];
+      return state.events
+        .filter(item => item.id !== excludeId)
+        .filter(item => eventOccursOnDate(item, date))
+        .filter(item => timesOverlap({ time, endTime }, { time: item.time || '', endTime: item.endTime || '' }))
+        .map(item => ({ ...item, occurrenceDate: date }));
+    }
+
+    function timesOverlap(a, b) {
+      if (!a.time || !b.time) return false;
+      if (!a.endTime || !b.endTime) return a.time === b.time;
+      return a.time < b.endTime && b.time < a.endTime;
+    }
+
+    function refreshEventConflictBanner() {
+      if (ui.editor?.kind !== 'event') return;
+      const banner = document.getElementById('eventConflictBanner');
+      if (!banner) return;
+      const date = document.getElementById('editor-event-date')?.value || '';
+      const time = document.getElementById('editor-event-time')?.value || '';
+      const endTime = normalizeEndTime(document.getElementById('editor-event-end-time')?.value || '', time);
+      const title = document.getElementById('editor-event-title')?.value.trim() || 'This event';
+      const conflicts = findEventConflicts({ id: ui.editor?.id || '', title }, date, time, endTime, ui.editor?.id || '');
+      if (!date || !time || !conflicts.length) {
+        banner.classList.add('hidden');
+        banner.innerHTML = '';
+        return;
+      }
+      banner.classList.remove('hidden');
+      banner.innerHTML = `
+        <div class="conflict-banner-title">Conflict warning</div>
+        <div class="muted-note">${escapeHtml(title)} overlaps with ${conflicts.length} existing appointment${conflicts.length === 1 ? '' : 's'} on ${escapeHtml(formatDate(date))}.</div>
+        <div class="conflict-list">${conflicts.map(item => `<span class="conflict-pill">${escapeHtml(item.title)}${item.time ? ` • ${escapeHtml(formatTimeRange(item.time, item.endTime))}` : ''}</span>`).join('')}</div>
+      `;
+    }
+
+    function formatDateTime(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    }
+
+    function exportBackup() {
+      const payload = JSON.stringify(state, null, 2);
+      const blob = new Blob([payload], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `family-group-hub-backup-${todayISO()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importBackup(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          state = normalizeState(JSON.parse(e.target.result));
+          applyTheme();
+          persistAndRender();
+        } catch {
+          alert('That file is not valid JSON. The backup goblin stays undefeated this round.');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function resetAll() {
+      const confirmReset = confirm('Reset all tasks, payments, names, events, and settings on this device?');
+      if (!confirmReset) return;
+      state = structuredClone(defaultState);
+      ui.showTaskDrawer = false;
+      ui.showPaymentDrawer = false;
+      state.activityExpanded = false;
+      ui.dayPreviewDate = '';
+      ui.editor = null;
+      applyTheme();
+      persistAndRender();
+    }
+
+    function populateMemberSelects() {
+      els.taskCreatedBy.innerHTML = memberOptions(els.taskCreatedBy.value || state.members[0]);
+      els.paymentAssigned.innerHTML = memberOptions(els.paymentAssigned.value || state.members[0]);
+      els.activeActor.innerHTML = state.members.map((member, index) => `<option value="${index}" ${Number(state.activeActor) === index ? 'selected' : ''}>${escapeHtml(member)}</option>`).join('');
+    }
+
+    function filteredTasks() {
+      return state.tasks.filter(task => {
+        if (state.taskFilter === 'All') return true;
+        if (state.taskFilter === 'Done') return task.recurrence === 'none' && task.status === 'Done';
+        return task.status === state.taskFilter;
+      });
+    }
+
+    function filteredPayments() {
+      return state.payments.filter(payment => state.paymentFilter === 'All' ? true : payment.status === state.paymentFilter);
+    }
+
+    function taskSort(a, b) {
+      const rank = { Open: 0, Claimed: 1, Done: 2 };
+      const dueA = a.recurrence !== 'none' ? (a.occurrenceDate || nextTaskOccurrence(a, todayISO()) || a.dueDate || '9999-12-31') : (a.occurrenceDate || a.dueDate || '9999-12-31');
+      const dueB = b.recurrence !== 'none' ? (b.occurrenceDate || nextTaskOccurrence(b, todayISO()) || b.dueDate || '9999-12-31') : (b.occurrenceDate || b.dueDate || '9999-12-31');
+      return rank[a.status] - rank[b.status] || dueA.localeCompare(dueB) || b.createdAt - a.createdAt;
+    }
+
+    function paymentSort(a, b) {
+      const rank = { Unpaid: 0, Partial: 1, Paid: 2 };
+      const dueA = a.dueDate || '9999-12-31';
+      const dueB = b.dueDate || '9999-12-31';
+      return rank[a.status] - rank[b.status] || dueA.localeCompare(dueB) || b.createdAt - a.createdAt;
+    }
+
+    function eventSort(a, b) {
+      return (a.time || '99:99').localeCompare(b.time || '99:99') || (a.endTime || '99:99').localeCompare(b.endTime || '99:99') || a.title.localeCompare(b.title);
+    }
+
+    function calendarItemSort(a, b) {
+      if (a.kind !== b.kind) return a.kind === 'event' ? -1 : 1;
+      if (a.kind === 'event') return eventSort(a, b);
+      return taskSort(a, b);
+    }
+
+    function memberOptions(selected) {
+      return state.members.map(member => `<option value="${escapeAttr(member)}" ${selected === member ? 'selected' : ''}>${escapeHtml(member)}</option>`).join('');
+    }
+
+    function toggleSecondary(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.toggle('open');
+    }
+
+    function monthParts(key) {
+      const [year, month] = String(key).split('-').map(Number);
+      return { year, monthIndex: month - 1 };
+    }
+
+    function currentMonthKey() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    function formatMonthLabel(key) {
+      const { year, monthIndex } = monthParts(key);
+      return new Date(year, monthIndex, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+    }
+
+    function addDays(isoDate, days) {
+      const [y, m, d] = isoDate.split('-').map(Number);
+      const next = new Date(y, m - 1, d + days);
+      return localISO(next);
+    }
+
+    function localISO(date) {
+      const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+      return local.toISOString().slice(0, 10);
+    }
+
+    function todayISO() {
+      return localISO(new Date());
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      const [y, m, d] = dateString.split('-').map(Number);
+      return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function formatTime(timeString) {
+      if (!timeString) return '';
+      const [hour = '0', minute = '0'] = String(timeString).split(':');
+      return new Date(2000, 0, 1, Number(hour), Number(minute)).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+    }
+
+    function sumAmounts(items) {
+      return items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+    }
+
+    function money(value) {
+      return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(Number(value || 0));
+    }
+
+    function uid() {
+      return Math.random().toString(36).slice(2, 10);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replaceAll('`', '&#96;');
+    }
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
