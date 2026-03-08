@@ -817,6 +817,37 @@
       font-weight: 700;
     }
 
+    .my-tabs .tab-btn {
+      min-height: 40px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      padding: 0 12px;
+      font-weight: 700;
+      color: var(--text-soft);
+      position: relative;
+    }
+
+    .my-tabs .tab-btn.active {
+      color: var(--text);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .my-tabs .tab-btn.member.active {
+      padding-left: 28px;
+    }
+
+    .my-tabs .tab-btn.member.active::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      transform: translateY(-50%);
+    }
+
     .my-summary {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1346,6 +1377,11 @@
       .controls-row .pill-group,
       .controls-row .segment-group,
       .calendar-filter-row,
+      .my-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
 
       .calendar-grid-wrap {
         overflow-x: auto;
@@ -1758,6 +1794,113 @@
       }
     }
 
+  
+
+    /* --- Accordion person focus update --- */
+    .family-strip {
+      align-items: start;
+    }
+
+    .family-accordion {
+      min-height: 128px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 8px auto;
+    }
+
+    .family-accordion.selected {
+      border-color: var(--border-strong);
+      background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .family-accordion.m0 .family-accent { background: var(--member-0); }
+    .family-accordion.m1 .family-accent { background: var(--member-1); }
+    .family-accordion.m2 .family-accent { background: var(--member-2); }
+
+    .family-card-button {
+      border: 0;
+      background: transparent;
+      display: block;
+    }
+
+    .family-card-button:hover,
+    .family-card-button:active {
+      transform: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .family-card-button:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: -2px;
+    }
+
+    .family-accordion.selected .family-chevron {
+      color: var(--text);
+    }
+
+    .family-dropdown {
+      border-top: 1px solid var(--border);
+      background: var(--surface-2);
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .family-dropdown-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .family-dropdown .person-metrics {
+      grid-template-columns: repeat(3, minmax(110px, 1fr));
+    }
+
+    .family-dropdown .person-focus-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .family-dropdown .focus-card {
+      min-height: 0;
+      background: var(--surface);
+    }
+
+    .family-dropdown .compact-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .family-accordion .person-filter-row {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 4px;
+    }
+
+    @media (max-width: 1360px) {
+      .family-dropdown .person-focus-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .family-dropdown {
+        padding: 14px;
+      }
+
+      .family-dropdown-head,
+      .family-dropdown .person-metrics,
+      .family-dropdown .person-focus-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1783,7 +1926,7 @@
 
     <section class="stats-grid" id="statsGrid"></section>
     <section class="family-strip" id="familyStrip"></section>
-    <section class="panel person-focus-panel hidden" id="personFocus"></section>
+    <section class="panel person-focus-panel hidden" id="personFocus" hidden></section>
 
     <section class="workspace-row main-row">
       <section class="panel">
@@ -2259,61 +2402,20 @@
       `).join('');
     }
 
-    function renderFamilyStrip() {
-      const descriptors = ['Lavender Lane', 'Deep Navy Lane', 'Teal Lane'];
-      const weekEnd = addDays(todayISO(), 7);
-      els.familyStrip.innerHTML = state.members.map((member, index) => {
-        const activeTasks = state.tasks.filter(task => task.assignedTo === member && task.status !== 'Done').length;
-        const completed = state.tasks.filter(task => task.completedBy === member).length;
-        const owed = sumAmounts(state.payments.filter(payment => payment.assignedTo === member && payment.status !== 'Paid'));
-        const dueSoon = state.tasks.filter(task => task.assignedTo === member && task.status !== 'Done').filter(task => {
-          const nextDue = nextTaskOccurrence(task, todayISO());
-          return nextDue && nextDue >= todayISO() && nextDue <= weekEnd;
-        }).length;
-        const selected = state.selectedMember === index;
-        return `
-          <button class="family-card family-card-button m${index} ${selected ? 'selected' : ''}" type="button" data-select-member="${index}" aria-expanded="${selected ? 'true' : 'false'}" aria-label="${escapeAttr(member)}, ${activeTasks} active tasks, ${money(owed)} owed, ${selected ? 'expanded' : 'collapsed'}">
-            <div class="family-accent"></div>
-            <div class="family-card-body">
-              <div class="family-top">
-                <div class="family-name-wrap">
-                  <span class="member-dot" aria-hidden="true"></span>
-                  <div>
-                    <div class="family-name-text">${escapeHtml(member)}</div>
-                    <div class="family-descriptor">${escapeHtml(descriptors[index] || 'Family lane')}</div>
-                  </div>
-                </div>
-                <span class="family-chevron" aria-hidden="true">${selected ? '▴' : '▾'}</span>
-              </div>
-              <div class="family-inline-stats">
-                <span><strong>${activeTasks}</strong> Active</span>
-                <span><strong>${completed}</strong> Done</span>
-                <span><strong>${escapeHtml(money(owed))}</strong> Owed</span>
-              </div>
-              <div class="family-foot-note">${dueSoon} due this week</div>
-            </div>
-          </button>
-        `;
-      }).join('');
-    }
-
-    function renderPersonFocus() {
-      if (state.selectedMember === null || state.selectedMember === undefined) {
-        els.personFocus.classList.add('hidden');
-        els.personFocus.innerHTML = '';
-        return;
-      }
-      const index = clampMemberIndex(state.selectedMember);
+    
+    function buildPersonFocusMarkup(index) {
       const member = state.members[index];
       const descriptors = ['Lavender Lane', 'Deep Navy Lane', 'Teal Lane'];
       const activeTasks = state.tasks.filter(task => task.assignedTo === member && task.status !== 'Done').sort(taskSort);
       const owedPayments = state.payments.filter(payment => payment.assignedTo === member && payment.status !== 'Paid').sort(paymentSort);
       const paidItems = state.payments.filter(payment => payment.assignedTo === member && payment.status === 'Paid').length;
-      const completed = state.tasks.filter(task => task.completedBy === member).sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || '')).slice(0, 3);
+      const completed = state.tasks
+        .filter(task => task.completedBy === member)
+        .sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''))
+        .slice(0, 3);
 
-      els.personFocus.classList.remove('hidden');
-      els.personFocus.innerHTML = `
-        <div class="person-focus-head">
+      return `
+        <div class="family-dropdown-head">
           <div class="person-identity m${index}">
             <span class="member-dot" aria-hidden="true"></span>
             <div>
@@ -2329,8 +2431,8 @@
         </div>
         <div class="person-filter-row">
           <button class="pill-btn ${state.taskFilter === 'All' && state.paymentFilter === 'All' ? 'active' : ''}" type="button" data-person-filter="all">All items</button>
-          <button class="pill-btn ${state.taskFilter === `member:${index}` ? 'active' : ''}" type="button" data-person-filter="tasks">This person's tasks</button>
-          <button class="pill-btn ${state.paymentFilter === `member:${index}` ? 'active' : ''}" type="button" data-person-filter="payments">This person's payments</button>
+          <button class="pill-btn ${state.taskFilter === `member:${index}` ? 'active' : ''}" type="button" data-person-filter="tasks">${escapeHtml(member)} tasks</button>
+          <button class="pill-btn ${state.paymentFilter === `member:${index}` ? 'active' : ''}" type="button" data-person-filter="payments">${escapeHtml(member)} payments</button>
           <button class="pill-btn" type="button" data-person-filter="clear">Clear filters</button>
         </div>
         <div class="person-focus-grid">
@@ -2363,6 +2465,53 @@
         </div>
       `;
     }
+
+    function renderFamilyStrip() {
+      const descriptors = ['Lavender Lane', 'Deep Navy Lane', 'Teal Lane'];
+      const weekEnd = addDays(todayISO(), 7);
+      els.familyStrip.innerHTML = state.members.map((member, index) => {
+        const activeTasks = state.tasks.filter(task => task.assignedTo === member && task.status !== 'Done').length;
+        const completed = state.tasks.filter(task => task.completedBy === member).length;
+        const owed = sumAmounts(state.payments.filter(payment => payment.assignedTo === member && payment.status !== 'Paid'));
+        const dueSoon = state.tasks.filter(task => task.assignedTo === member && task.status !== 'Done').filter(task => {
+          const nextDue = nextTaskOccurrence(task, todayISO());
+          return nextDue && nextDue >= todayISO() && nextDue <= weekEnd;
+        }).length;
+        const selected = state.selectedMember === index;
+        return `
+          <article class="family-accordion m${index} ${selected ? 'selected' : ''}">
+            <div class="family-accent"></div>
+            <button class="family-card-button" type="button" data-select-member="${index}" aria-expanded="${selected ? 'true' : 'false'}" aria-controls="family-dropdown-${index}" aria-label="${escapeAttr(member)}, ${activeTasks} active tasks, ${money(owed)} owed, ${selected ? 'expanded' : 'collapsed'}">
+              <div class="family-card-body">
+                <div class="family-top">
+                  <div class="family-name-wrap">
+                    <span class="member-dot" aria-hidden="true"></span>
+                    <div>
+                      <div class="family-name-text">${escapeHtml(member)}</div>
+                      <div class="family-descriptor">${escapeHtml(descriptors[index] || 'Family lane')}</div>
+                    </div>
+                  </div>
+                  <span class="family-chevron" aria-hidden="true">${selected ? '▴' : '▾'}</span>
+                </div>
+                <div class="family-inline-stats">
+                  <span><strong>${activeTasks}</strong> Active</span>
+                  <span><strong>${completed}</strong> Done</span>
+                  <span><strong>${escapeHtml(money(owed))}</strong> Owed</span>
+                </div>
+                <div class="family-foot-note">${dueSoon} due this week</div>
+              </div>
+            </button>
+            ${selected ? `<div class="family-dropdown" id="family-dropdown-${index}">${buildPersonFocusMarkup(index)}</div>` : ''}
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderPersonFocus() {
+      els.personFocus.classList.add('hidden');
+      els.personFocus.innerHTML = '';
+    }
+
 
     function renderTaskFilters() {
       const filters = ['All', 'Open', 'Claimed', 'Done'];
