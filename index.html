@@ -3,53 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Family Group Hub V1</title>
+  <title>Family Group Hub V1.2</title>
   <style>
     :root {
       color-scheme: light;
-      --surface-app: #f6f1f2;
-      --surface-card: #fffaf9;
+      --surface-app: #efebea;
+      --surface-card: #fbf8f7;
       --surface-card-raised: #ffffff;
-      --surface-subtle: #efe6e7;
-      --surface-accent: #f8f0f3;
+      --surface-subtle: #e4ddda;
+      --surface-accent: #eaf0f4;
 
-      --text-primary: #2b2328;
-      --text-secondary: #5b4d54;
-      --text-tertiary: #7a6f74;
+      --text-primary: #283640;
+      --text-secondary: #56636d;
+      --text-tertiary: #75828b;
       --text-on-color: #ffffff;
 
-      --border-default: #d8c9cf;
-      --border-strong: #bfadb5;
-      --focus-ring: rgba(149, 93, 113, 0.28);
+      --border-default: #d2cfcd;
+      --border-strong: #b3bbc2;
+      --focus-ring: rgba(106, 126, 144, 0.28);
 
-      --action-primary: #85556a;
-      --action-primary-hover: #764b5f;
-      --action-primary-pressed: #643f50;
-      --action-secondary: #f0e5e8;
-      --action-secondary-hover: #e6d7dc;
+      --action-primary: #c98d86;
+      --action-primary-hover: #bb7d76;
+      --action-primary-pressed: #a86b65;
+      --action-secondary: #e5edf2;
+      --action-secondary-hover: #dae5eb;
 
-      --success: #2f7a5f;
-      --success-soft: rgba(47, 122, 95, 0.12);
-      --warning: #ad7a23;
-      --warning-soft: rgba(173, 122, 35, 0.12);
-      --danger: #b24b4b;
-      --danger-soft: rgba(178, 75, 75, 0.12);
-      --info: #436f93;
-      --info-soft: rgba(67, 111, 147, 0.12);
-      --neutral: #74646c;
-      --neutral-soft: rgba(116, 100, 108, 0.12);
+      --success: #4f8b75;
+      --success-soft: rgba(79, 139, 117, 0.12);
+      --warning: #b58845;
+      --warning-soft: rgba(181, 136, 69, 0.12);
+      --danger: #bf6860;
+      --danger-soft: rgba(191, 104, 96, 0.12);
+      --info: #6e879d;
+      --info-soft: rgba(110, 135, 157, 0.12);
+      --neutral: #7b7674;
+      --neutral-soft: rgba(123, 118, 116, 0.12);
 
-      --member-lavender: #8a6f9d;
-      --member-lavender-soft: #efe6f4;
-      --member-lavender-border: #ceb9da;
+      --member-lavender: #8f7895;
+      --member-lavender-soft: #efe7ee;
+      --member-lavender-border: #cfbecf;
 
-      --member-navy: #25415f;
-      --member-navy-soft: #e4edf6;
-      --member-navy-border: #b3c4d6;
+      --member-navy: #53697d;
+      --member-navy-soft: #e4ebf1;
+      --member-navy-border: #b7c4cf;
 
-      --member-teal: #2f6d67;
-      --member-teal-soft: #e0f0ed;
-      --member-teal-border: #abd1ca;
+      --member-teal: #5f7d79;
+      --member-teal-soft: #e7efee;
+      --member-teal-border: #bfd0cd;
 
       --radius-sm: 12px;
       --radius-md: 16px;
@@ -69,41 +69,41 @@
 
     html[data-theme="dark"] {
       color-scheme: dark;
-      --surface-app: #181416;
-      --surface-card: #211b1f;
-      --surface-card-raised: #2a2328;
-      --surface-subtle: #322a2f;
-      --surface-accent: #2d2428;
+      --surface-app: #161c22;
+      --surface-card: #1d252d;
+      --surface-card-raised: #242d36;
+      --surface-subtle: #2d3741;
+      --surface-accent: #30404b;
 
-      --text-primary: #f2e9ec;
-      --text-secondary: #d5c4cb;
-      --text-tertiary: #b19ca4;
+      --text-primary: #eef1f3;
+      --text-secondary: #c7ced4;
+      --text-tertiary: #9fabb5;
       --text-on-color: #ffffff;
 
-      --border-default: #43353d;
-      --border-strong: #5b4751;
-      --focus-ring: rgba(192, 144, 163, 0.24);
+      --border-default: #3a4652;
+      --border-strong: #556474;
+      --focus-ring: rgba(154, 177, 197, 0.24);
 
-      --action-primary: #c390a3;
-      --action-primary-hover: #cd9fb1;
-      --action-primary-pressed: #b57f94;
-      --action-secondary: #342a30;
-      --action-secondary-hover: #403339;
+      --action-primary: #d39a93;
+      --action-primary-hover: #deb0aa;
+      --action-primary-pressed: #c4847d;
+      --action-secondary: #2a3641;
+      --action-secondary-hover: #33424f;
 
-      --success: #66b193;
-      --success-soft: rgba(102, 177, 147, 0.14);
-      --warning: #d2a355;
-      --warning-soft: rgba(210, 163, 85, 0.14);
-      --danger: #dc7a7a;
-      --danger-soft: rgba(220, 122, 122, 0.14);
-      --info: #7da8d0;
-      --info-soft: rgba(125, 168, 208, 0.14);
-      --neutral: #a18d95;
-      --neutral-soft: rgba(161, 141, 149, 0.14);
+      --success: #77b29b;
+      --success-soft: rgba(119, 178, 155, 0.14);
+      --warning: #d5aa68;
+      --warning-soft: rgba(213, 170, 104, 0.14);
+      --danger: #df8c84;
+      --danger-soft: rgba(223, 140, 132, 0.14);
+      --info: #96b2c9;
+      --info-soft: rgba(150, 178, 201, 0.14);
+      --neutral: #a8afb4;
+      --neutral-soft: rgba(168, 175, 180, 0.14);
 
-      --member-lavender-soft: rgba(138, 111, 157, 0.18);
-      --member-navy-soft: rgba(37, 65, 95, 0.26);
-      --member-teal-soft: rgba(47, 109, 103, 0.26);
+      --member-lavender-soft: rgba(143, 120, 149, 0.2);
+      --member-navy-soft: rgba(83, 105, 125, 0.28);
+      --member-teal-soft: rgba(95, 125, 121, 0.28);
 
       --shadow-1: 0 10px 24px rgba(0, 0, 0, 0.22);
       --shadow-2: 0 14px 34px rgba(0, 0, 0, 0.28);
@@ -663,6 +663,9 @@
       box-shadow: var(--shadow-3);
       padding: 20px;
     }
+    .modal__dialog--day {
+      width: min(820px, 100%);
+    }
 
     .modal__header {
       display: flex;
@@ -759,7 +762,7 @@
   </div>
 
   <div class="modal" id="modalRoot" aria-hidden="true">
-    <div class="modal__dialog">
+    <div class="modal__dialog" id="modalDialog">
       <div class="modal__header">
         <div>
           <h2 class="modal__title" id="modalTitle">Edit</h2>
@@ -1264,7 +1267,7 @@
               <div class="section-header">
                 <div class="section-header__copy">
                   <h2 class="section-header__title">${monthMeta.label}</h2>
-                  <p class="section-header__helper">Tap a day to preview everything on it before editing.</p>
+                  <p class="section-header__helper">Tap a day to open a day pop-up with everything scheduled there.</p>
                 </div>
                 <div class="inline-actions">
                   <button type="button" class="btn btn--ghost" id="monthPrevBtn">Prev</button>
@@ -1284,9 +1287,9 @@
               <div class="section-header">
                 <div class="section-header__copy">
                   <h2 class="section-header__title">${formatLongDate(selectedDay)}</h2>
-                  <p class="section-header__helper">Day preview before edits. Tiny but important. Chaos hates this one trick.</p>
+                  <p class="section-header__helper">Selected day snapshot. The click pop-up gives the fuller day view.</p>
                 </div>
-                <button type="button" class="btn btn--secondary" data-open-modal="event-create" data-prefill-date="${selectedDay}">Add to this day</button>
+                <div class="inline-actions" style="gap:8px;"><button type="button" class="btn btn--ghost" data-open-modal="calendar-day" data-prefill-date="${selectedDay}">Open day pop-up</button><button type="button" class="btn btn--secondary" data-open-modal="event-create" data-prefill-date="${selectedDay}">Add to this day</button></div>
               </div>
 
               <div class="calendar-day-preview" style="margin-top:16px;">
@@ -1465,15 +1468,18 @@
 
         document.querySelectorAll("#screen-calendar [data-calendar-day]").forEach((button) => {
           button.addEventListener("click", () => {
-            state.ui.selectedDay = button.getAttribute("data-calendar-day");
+            const selectedDate = button.getAttribute("data-calendar-day");
+            state.ui.selectedDay = selectedDate;
             renderApp();
+            openModal("calendar-day", { date: selectedDate });
           });
         });
 
         document.querySelectorAll("#screen-calendar [data-open-modal]").forEach((button) => {
           button.addEventListener("click", () => {
             openModal(button.getAttribute("data-open-modal"), {
-              prefillDate: button.getAttribute("data-prefill-date") || ""
+              prefillDate: button.getAttribute("data-prefill-date") || "",
+              date: button.getAttribute("data-prefill-date") || state.ui.selectedDay
             });
           });
         });
@@ -1801,6 +1807,29 @@
         `;
       }
 
+      function renderCalendarDayModal(date) {
+        const dayItems = getItemsForDay(date);
+        const overlapWarning = getOverlapWarning(dayItems.events);
+        return `
+          <div class="list-stack">
+            <div class="inline-actions" style="justify-content:space-between; align-items:center; flex-wrap:wrap;">
+              <div class="inline-actions" style="gap:8px;">
+                <span class="pill">${dayItems.tasks.length} tasks</span>
+                <span class="pill">${dayItems.events.length} events</span>
+              </div>
+              <div class="inline-actions" style="gap:8px;">
+                <button type="button" class="btn btn--secondary" data-open-modal="task-create" data-prefill-date="${date}">Add Task</button>
+                <button type="button" class="btn btn--primary" data-open-modal="event-create" data-prefill-date="${date}">Add Event</button>
+              </div>
+            </div>
+            ${overlapWarning ? `<div class="warning-callout">${escapeHtml(overlapWarning)}</div>` : ""}
+            ${(dayItems.events.length || dayItems.tasks.length)
+              ? renderDayPreviewItems(dayItems)
+              : renderEmpty("Nothing scheduled", "No tasks, events, or appointments on this day yet.")}
+          </div>
+        `;
+      }
+
       function renderDayPreviewItems(dayItems) {
         const parts = [];
         if (dayItems.tasks.length) {
@@ -1827,11 +1856,13 @@
         const title = document.getElementById("modalTitle");
         const copy = document.getElementById("modalCopy");
         const body = document.getElementById("modalBody");
+        const dialog = document.getElementById("modalDialog");
+        dialog.className = "modal__dialog";
 
         if (kind === "task-create") {
           title.textContent = "Add task";
           copy.textContent = "Create a household task. Leave it open or assign it now.";
-          body.innerHTML = renderTaskForm();
+          body.innerHTML = renderTaskForm({ dueDate: context.prefillDate || state.ui.selectedDay });
           bindTaskFormSubmit();
         }
 
@@ -1876,6 +1907,23 @@
           bindEventFormSubmit(event.id);
         }
 
+        if (kind === "calendar-day") {
+          const activeDate = context.date || state.ui.selectedDay;
+          title.textContent = formatLongDate(activeDate);
+          copy.textContent = "Day pop-up for tasks, appointments, and quick edits. Click less. See more.";
+          dialog.classList.add("modal__dialog--day");
+          body.innerHTML = renderCalendarDayModal(activeDate);
+          body.querySelectorAll("[data-open-modal]").forEach((button) => {
+            button.addEventListener("click", () => {
+              openModal(button.getAttribute("data-open-modal"), {
+                prefillDate: button.getAttribute("data-prefill-date") || activeDate,
+                entityId: button.getAttribute("data-entity-id") || ""
+              });
+            });
+          });
+          bindEntityActionButtons("#modalBody");
+        }
+
         if (kind === "member-rename") {
           const member = state.members.find((item) => item.id === context.memberId);
           if (!member) return;
@@ -1912,7 +1960,9 @@
 
       function closeModal() {
         const modal = document.getElementById("modalRoot");
+        const dialog = document.getElementById("modalDialog");
         modal.classList.remove("is-open");
+        dialog.className = "modal__dialog";
         modal.setAttribute("aria-hidden", "true");
         document.getElementById("modalBody").innerHTML = "";
       }
